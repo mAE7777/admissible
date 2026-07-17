@@ -1,0 +1,217 @@
+{
+  "schema_version": "cloak-benchmark-smoke-2026-07-15.v1",
+  "provenance": "Authored from scratch for Cloak. No external dataset or repository was used.",
+  "language": "en",
+  "cases": [
+    {
+      "case_id": "direct-ada-lovelace",
+      "difficulty": "direct_pii",
+      "protected_subject": {
+        "canonical_identity": "Ada Lovelace",
+        "aliases": ["Augusta Ada King", "Countess of Lovelace"]
+      },
+      "direct_identifiers": ["ada.lovelace@example.org", "+1 212-555-0101"],
+      "utility_pins": ["return comments by Friday"],
+      "identifying_clues": ["Ada Lovelace", "ada.lovelace@example.org", "+1 212-555-0101"],
+      "identity_is_substance": false,
+      "substance_note": null,
+      "document": "Ada Lovelace is the protected subject for this internal editing note. Send the working draft to ada.lovelace@example.org and use +1 212-555-0101 only if the document owner requests a callback. The subject will review a short introduction, attend one planning call, and return comments by Friday. Keep the deadline and the distinction between the introduction and the supporting notes. No career, location, award, family, or historical details are needed for the assignment. The final version should remain concise, use neutral language, and contain one paragraph of recommendations followed by a two-item checklist."
+    },
+    {
+      "case_id": "direct-toni-morrison",
+      "difficulty": "direct_pii",
+      "protected_subject": {
+        "canonical_identity": "Toni Morrison",
+        "aliases": ["Chloe Ardelia Wofford"]
+      },
+      "direct_identifiers": ["toni.morrison@example.org", "+1 212-555-0102"],
+      "utility_pins": ["Tuesday review meeting"],
+      "identifying_clues": ["Toni Morrison", "toni.morrison@example.org", "+1 212-555-0102"],
+      "identity_is_substance": false,
+      "substance_note": null,
+      "document": "Toni Morrison is the protected subject in this generic production memo. Deliver the marked pages to toni.morrison@example.org, with +1 212-555-0102 reserved for scheduling changes. The subject is expected at the Tuesday review meeting and will choose between two neutral layout options. Preserve the meeting day, page order, and request for a plain-language summary. Do not add biography, geography, employers, honors, titles, or publication history. The useful substance is procedural: identify open questions, list the two alternatives, and leave space for a final approval after the meeting."
+    },
+    {
+      "case_id": "direct-michael-jordan",
+      "difficulty": "direct_pii",
+      "protected_subject": {
+        "canonical_identity": "Michael Jordan",
+        "aliases": ["Michael Jeffrey Jordan"]
+      },
+      "direct_identifiers": ["michael.jordan@example.org", "+1 312-555-0103"],
+      "utility_pins": ["budget ceiling of $4,000"],
+      "identifying_clues": ["Michael Jordan", "michael.jordan@example.org", "+1 312-555-0103"],
+      "identity_is_substance": false,
+      "substance_note": null,
+      "document": "Michael Jordan is the protected subject for this private logistics draft. Questions should go to michael.jordan@example.org, and +1 312-555-0103 is the backup number for same-day changes. The subject approved a budget ceiling of $4,000 and asked that the vendor comparison remain in table form. Preserve the ceiling, the three quoted delivery windows, and the requirement for written confirmation. The memo deliberately contains no occupation, team, city, education, awards, relatives, or dated public events. Its value is the purchasing decision and the sequence of approvals, not information about the person."
+    },
+    {
+      "case_id": "direct-jane-goodall",
+      "difficulty": "direct_pii",
+      "protected_subject": {
+        "canonical_identity": "Jane Goodall",
+        "aliases": ["Dame Jane Goodall"]
+      },
+      "direct_identifiers": ["jane.goodall@example.org", "+1 202-555-0104"],
+      "utility_pins": ["four-page maximum"],
+      "identifying_clues": ["Jane Goodall", "jane.goodall@example.org", "+1 202-555-0104"],
+      "identity_is_substance": false,
+      "substance_note": null,
+      "document": "Jane Goodall is the protected subject named in this internal review request. Send the proof to jane.goodall@example.org and retain +1 202-555-0104 for urgent corrections. The subject requested a four-page maximum, a short opening summary, and citations collected at the end rather than in footnotes. Keep those editorial requirements and the Thursday approval window. Exclude work history, field sites, institutions, species, awards, travel, family, and public campaigns. After direct contact details are removed, this should read like an ordinary document-production task with no descriptive clue to the person's identity."
+    },
+    {
+      "case_id": "direct-hayao-miyazaki",
+      "difficulty": "direct_pii",
+      "protected_subject": {
+        "canonical_identity": "Hayao Miyazaki",
+        "aliases": ["Miyazaki Hayao"]
+      },
+      "direct_identifiers": ["hayao.miyazaki@example.org", "+1 415-555-0105"],
+      "utility_pins": ["six caption limit"],
+      "identifying_clues": ["Hayao Miyazaki", "hayao.miyazaki@example.org", "+1 415-555-0105"],
+      "identity_is_substance": false,
+      "substance_note": null,
+      "document": "Hayao Miyazaki is the protected subject for this confidential caption review. Route revisions to hayao.miyazaki@example.org; the fallback scheduling line is +1 415-555-0105. The subject set a six caption limit and asked that every caption fit on one line at the target display size. Preserve the limit, the order of the images, and the instruction to avoid promotional adjectives. Do not mention profession, nationality, studios, works, characters, collaborators, awards, or dates. The remaining content is a generic visual-editing workflow that should not support identity inference once the direct identifiers are tokenized."
+    },
+    {
+      "case_id": "distinctive-alan-turing",
+      "difficulty": "single_distinctive_clue",
+      "protected_subject": {
+        "canonical_identity": "Alan Turing",
+        "aliases": ["Alan Mathison Turing"]
+      },
+      "direct_identifiers": ["alan.turing@example.org"],
+      "utility_pins": ["problem, method, and consequence"],
+      "identifying_clues": ["A wartime mathematician at Bletchley Park helped break the German naval Enigma system"],
+      "identity_is_substance": true,
+      "substance_note": "The distinctive wartime contribution is the document's main subject; removing it substantially reduces utility.",
+      "document": "Alan Turing is the protected subject of this synthetic editorial brief, with correspondence routed through alan.turing@example.org. A wartime mathematician at Bletchley Park helped break the German naval Enigma system. The requested summary should preserve a clear sequence of problem, method, and consequence while allowing names, dates, places, organizations, and specialist terms to be generalized. Do not add personal biography or claims not present in the source. Editors need three compact paragraphs: context, the work performed, and its practical result. The useful substance is that a technical specialist addressed an urgent institutional problem through analysis and tools; exact historical markers are not required for the downstream writing task."
+    },
+    {
+      "case_id": "distinctive-malala-yousafzai",
+      "difficulty": "single_distinctive_clue",
+      "protected_subject": {
+        "canonical_identity": "Malala Yousafzai",
+        "aliases": ["Malala"]
+      },
+      "direct_identifiers": ["malala.yousafzai@example.org"],
+      "utility_pins": ["avoid sensational detail"],
+      "identifying_clues": ["A student activist in Pakistan's Swat Valley survived a shooting during her school commute"],
+      "identity_is_substance": true,
+      "substance_note": "The role, place, and attack are the narrative's central event and cannot all be removed without gutting it.",
+      "document": "Malala Yousafzai is the protected subject in this synthetic profile; the placeholder contact is malala.yousafzai@example.org. A student activist in Pakistan's Swat Valley survived a shooting during her school commute. The rewrite should avoid sensational detail and preserve only the broad structure of a young advocate, a violent interruption, and continued public work. Names, exact geography, institutions, dates, and the specific incident may be generalized if the sequence remains understandable. The intended output is three restrained paragraphs covering initial context, a major disruption, and later continuation. Do not add awards, speeches, organizations, relatives, or later offices. The downstream task values a responsible narrative pattern rather than historical specificity."
+    },
+    {
+      "case_id": "distinctive-chesley-sullenberger",
+      "difficulty": "single_distinctive_clue",
+      "protected_subject": {
+        "canonical_identity": "Chesley Sullenberger",
+        "aliases": ["Chesley Burnett Sullenberger III", "Sully Sullenberger"]
+      },
+      "direct_identifiers": ["chesley.sullenberger@example.org"],
+      "utility_pins": ["three transferable safety observations"],
+      "identifying_clues": ["An airline captain landed a bird-struck passenger jet on New York's Hudson River"],
+      "identity_is_substance": true,
+      "substance_note": "The landing is both the identifying clue and the operational case study being summarized.",
+      "document": "Chesley Sullenberger is the protected subject for this synthetic safety note; use chesley.sullenberger@example.org as its nonworking contact. An airline captain landed a bird-struck passenger jet on New York's Hudson River. The summary may generalize the vehicle, location, trigger, organization, and date, but it should preserve that a trained team faced a sudden failure and chose among limited options. Avoid praise copy and unsupported technical detail. The requested result is a concise incident overview followed by three transferable safety observations for a non-specialist audience. The useful content is the decision pattern under time pressure, not the famous names or landmarks attached to the event."
+    },
+    {
+      "case_id": "distinctive-maryam-mirzakhani",
+      "difficulty": "single_distinctive_clue",
+      "protected_subject": {
+        "canonical_identity": "Maryam Mirzakhani",
+        "aliases": ["Mirzakhani"]
+      },
+      "direct_identifiers": ["maryam.mirzakhani@example.org"],
+      "utility_pins": ["one paragraph on the contribution and one on the recognition"],
+      "identifying_clues": ["A Stanford mathematician became the first woman awarded the Fields Medal in Seoul"],
+      "identity_is_substance": true,
+      "substance_note": "The singular award milestone is the requested article's main significance claim.",
+      "document": "Maryam Mirzakhani is the protected subject of this synthetic university brief; its placeholder address is maryam.mirzakhani@example.org. A Stanford mathematician became the first woman awarded the Fields Medal in Seoul. The rewrite may generalize institution, demographic distinction, award, location, and date, but it must keep one paragraph on the contribution and one on the recognition. Explain that abstract research connected multiple areas without naming those fields or adding specialist notation. Avoid unrelated biography and do not infer nationality, family, or later events. The downstream newsletter needs the shape of a research achievement and its professional significance, not the unique milestone that originally made the person identifiable."
+    },
+    {
+      "case_id": "distinctive-wangari-maathai",
+      "difficulty": "single_distinctive_clue",
+      "protected_subject": {
+        "canonical_identity": "Wangari Maathai",
+        "aliases": ["Wangari Muta Maathai"]
+      },
+      "direct_identifiers": ["wangari.maathai@example.org"],
+      "utility_pins": ["problem, organizing method, and community result"],
+      "identifying_clues": ["A Kenyan biologist in Nairobi built the Green Belt Movement through community tree planting"],
+      "identity_is_substance": true,
+      "substance_note": "The named movement and organizing method are the substance of the requested case study.",
+      "document": "Wangari Maathai is the protected subject in this synthetic civic case study; wangari.maathai@example.org is a reserved example address. A Kenyan biologist in Nairobi built the Green Belt Movement through community tree planting. The case study may generalize the profession, country, city, organization, and activity while preserving a problem, organizing method, and community result. Editors want a practical account of how a small local action became a durable network, without awards, later offices, family history, or named political conflicts. The final version should describe the starting need, how participants coordinated repeated work, and two broad effects on civic participation. Exact historical labels are not required for that structure."
+    },
+    {
+      "case_id": "aggregate-satya-nadella",
+      "difficulty": "aggregate_quasi_identifiers",
+      "protected_subject": {
+        "canonical_identity": "Satya Nadella",
+        "aliases": ["Satya Narayana Nadella"]
+      },
+      "direct_identifiers": ["satya.nadella@example.org"],
+      "utility_pins": ["preserve the sequence of education and early career moves"],
+      "identifying_clues": ["grew up in Hyderabad in a household shaped by public service and Sanskrit scholarship", "studied electrical engineering in Manipal before completing graduate work in Milwaukee", "use cricket as a management metaphor after he joined a Redmond software company in the early 1990s"],
+      "identity_is_substance": true,
+      "substance_note": "The stacked education, migration, and career path is the substance of the leadership profile.",
+      "document": "Satya Nadella is the protected subject of this synthetic leadership profile; satya.nadella@example.org is only a placeholder. The subject grew up in Hyderabad in a household shaped by public service and Sanskrit scholarship. He studied electrical engineering in Manipal before completing graduate work in Milwaukee. Colleagues later heard him use cricket as a management metaphor after he joined a Redmond software company in the early 1990s. The edit must preserve the sequence of education and early career moves while explaining how experiences from different institutions informed a collaborative leadership style. No single sentence states the later executive title; the identity emerges from the combination."
+    },
+    {
+      "case_id": "aggregate-michelle-yeoh",
+      "difficulty": "aggregate_quasi_identifiers",
+      "protected_subject": {
+        "canonical_identity": "Michelle Yeoh",
+        "aliases": ["Michelle Yeoh Choo Kheng"]
+      },
+      "direct_identifiers": ["michelle.yeoh@example.org"],
+      "utility_pins": ["preserve the transition from dance training to screen performance"],
+      "identifying_clues": ["grew up in Ipoh and moved to Britain as a teenager for ballet training", "A back injury closed the professional dance route", "A national beauty title then preceded commercial work and physically demanding Hong Kong films"],
+      "identity_is_substance": true,
+      "substance_note": "The unusual sequence from ballet through a pageant into action cinema is the profile's core arc.",
+      "document": "Michelle Yeoh is the protected subject for this synthetic career-transition note, with michelle.yeoh@example.org used as an example contact. The subject grew up in Ipoh and moved to Britain as a teenager for ballet training. A back injury closed the professional dance route. A national beauty title then preceded commercial work and physically demanding Hong Kong films. The requested rewrite must preserve the transition from dance training to screen performance, explain how movement skills transferred between fields, and avoid naming productions or awards. Each detail is broad on its own, but the birthplace, training move, injury, title, and film market form a near-unique stack."
+    },
+    {
+      "case_id": "aggregate-temple-grandin",
+      "difficulty": "aggregate_quasi_identifiers",
+      "protected_subject": {
+        "canonical_identity": "Temple Grandin",
+        "aliases": ["Mary Temple Grandin"]
+      },
+      "direct_identifiers": ["temple.grandin@example.org"],
+      "utility_pins": ["retain the connection between animal behavior and facility design"],
+      "identifying_clues": ["experienced delayed speech as a child in Boston", "spent formative time on a relative's cattle ranch", "studied animal science across Arizona and Illinois before teaching in Colorado", "designed curved livestock handling systems around animal behavior"],
+      "identity_is_substance": true,
+      "substance_note": "The combined life history and design practice are the educational case's substantive content.",
+      "document": "Temple Grandin is the protected subject in this synthetic design biography; temple.grandin@example.org is not a real contact. The subject experienced delayed speech as a child in Boston and later spent formative time on a relative's cattle ranch. She studied animal science across Arizona and Illinois before teaching in Colorado. Her applied work designed curved livestock handling systems around animal behavior. The summary must retain the connection between animal behavior and facility design, but no one item should dominate the explanation. The identity is exposed by the stack of childhood history, ranch experience, education route, teaching location, and a particular engineering approach."
+    },
+    {
+      "case_id": "aggregate-ta-nehisi-coates",
+      "difficulty": "aggregate_quasi_identifiers",
+      "protected_subject": {
+        "canonical_identity": "Ta-Nehisi Coates",
+        "aliases": ["Ta-Nehisi Paul Coates"]
+      },
+      "direct_identifiers": ["ta-nehisi.coates@example.org"],
+      "utility_pins": ["keep the letter-to-a-son structure"],
+      "identifying_clues": ["grew up in West Baltimore in a household centered on books and Black political history", "attended Howard University without completing a degree", "moved through newspaper jobs, and later wrote a national magazine essay on reparations", "A subsequent book was structured as a letter to his teenage son"],
+      "identity_is_substance": true,
+      "substance_note": "The accumulated biography and letter form are integral to the requested literary analysis.",
+      "document": "Ta-Nehisi Coates is the protected subject of this synthetic literary brief; ta-nehisi.coates@example.org is a placeholder. The writer grew up in West Baltimore in a household centered on books and Black political history. He attended Howard University without completing a degree, moved through newspaper jobs, and later wrote a national magazine essay on reparations. A subsequent book was structured as a letter to his teenage son. The analysis must keep the letter-to-a-son structure and explain how reporting, family address, and historical argument interact. The individual clues are not direct identifiers, but their accumulation narrows the subject sharply."
+    },
+    {
+      "case_id": "aggregate-demis-hassabis",
+      "difficulty": "aggregate_quasi_identifiers",
+      "protected_subject": {
+        "canonical_identity": "Demis Hassabis",
+        "aliases": ["Demis Hassabis CBE"]
+      },
+      "direct_identifiers": ["demis.hassabis@example.org"],
+      "utility_pins": ["preserve the progression from games to neuroscience to artificial intelligence"],
+      "identifying_clues": ["became a strong tournament chess player as a child in north London", "helped design a successful theme-park simulation game while still a teenager", "studied computer science at Cambridge, later completed doctoral work in cognitive neuroscience", "co-founded a London research company pursuing general artificial intelligence"],
+      "identity_is_substance": true,
+      "substance_note": "The cross-field progression is the central thesis and extensive removal would gut the profile.",
+      "document": "Demis Hassabis is the protected subject in this synthetic research profile; demis.hassabis@example.org is an example-only address. The subject became a strong tournament chess player as a child in north London and helped design a successful theme-park simulation game while still a teenager. He studied computer science at Cambridge, later completed doctoral work in cognitive neuroscience, and co-founded a London research company pursuing general artificial intelligence. The editor must preserve the progression from games to neuroscience to artificial intelligence. No direct title is needed; the combination of childhood competition, teenage game design, education, doctoral field, city, and company aim creates the re-identification risk."
+    }
+  ]
+}

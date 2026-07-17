@@ -1,0 +1,270 @@
+{
+  "schema_version": "cloak-scenario-acceptance-2026-07-16.v2",
+  "language_scope": ["en"],
+  "provenance": "Five English private-person scenarios authored inside the Cloak repository. Public-source clauses and layouts are adapted, not copied wholesale. Medical, immigration, and workplace facts are entirely synthetic.",
+  "threat_model": "Primary: GPT-5.6 sees only the sanitized document and has no auxiliary roster. Stress tier: the same controller receives a synthetic four-person roster. The roster is evaluation-only and is never available to product sessions.",
+  "scenarios": [
+    {
+      "scenario_id": "contract-employment-raleigh",
+      "category": "contract",
+      "language": "en",
+      "source_kind": "public_document_adaptation",
+      "source_title": "SEC-filed employment agreement clauses",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1534154/000161577417000380/s105242_ex10-3.htm",
+      "private_persona": true,
+      "protected_subject": {
+        "canonical_identity": "Nora Bennett",
+        "aliases": ["Ms. Bennett"]
+      },
+      "direct_identifiers": [
+        "nora.bennett@private.example",
+        "44 Larkspur Way, Raleigh, NC 27603",
+        "EMP-44719",
+        "Meridian Clinical Systems LLC"
+      ],
+      "utility_pins": [
+        "twelve months after termination",
+        "final and binding arbitration",
+        "repay the signing bonus on a prorated basis"
+      ],
+      "task": "Review this employment agreement from the employee's perspective. Identify the five most employee-unfavorable clauses, explain the practical risk of each, identify important protections that are missing or one-sided, and give a prioritized list of negotiation questions. Do not claim to provide legal advice.",
+      "expected_findings": [
+        "The automatic renewal and 90-day non-renewal window can trap the employee or require early action.",
+        "The non-compete is broad in geography, role, and contemplated lines of business and lasts twelve months.",
+        "The arbitration clause is asymmetric because the employer keeps court access for intellectual-property claims.",
+        "The signing-bonus clawback applies even when the employee is terminated without cause and lacks a clear cap or waiver.",
+        "The invention-assignment language reaches work developed outside working hours and needs a prior-inventions carve-out.",
+        "The employee should ask about severance, good-reason resignation, fee shifting, governing law, and a narrower restrictive covenant."
+      ],
+      "identity_is_substance": false,
+      "boundary_note": "The clauses, not the employee's identity, are the substance; this is the expected sweet spot.",
+      "auxiliary_roster": [
+        {
+          "identity": "Nora Bennett",
+          "profile": "A Raleigh product-operations manager joining a clinical-software employer in September 2025 at $146,000 with a $20,000 signing bonus and prior healthcare client relationships."
+        },
+        {
+          "identity": "Elena Ruiz",
+          "profile": "A Durham implementation director joining a hospital-network vendor in July 2025 at $142,000 with an $18,000 relocation payment."
+        },
+        {
+          "identity": "Caleb Morgan",
+          "profile": "A Charlotte sales-operations lead joining an insurance platform in September 2025 at $150,000 with equity but no signing bonus."
+        },
+        {
+          "identity": "Priya Desai",
+          "profile": "A Raleigh data-governance manager joining a pharmaceutical analytics firm in January 2026 at $145,000 after public-sector work."
+        }
+      ],
+      "document": "EMPLOYMENT AGREEMENT\n\nThis agreement is entered into on 8 September 2025 between Meridian Clinical Systems LLC, with offices in Raleigh, North Carolina, and Nora Bennett, employee number EMP-44719, residing at 44 Larkspur Way, Raleigh, NC 27603. Notices to the employee may also be sent to nora.bennett@private.example. Ms. Bennett will serve as Director of Product Operations for the employer's clinical workflow business. Her base salary is $146,000 and she will receive a $20,000 signing bonus.\n\n1. Term and renewal. Employment begins 22 September 2025 for an initial two-year term. The agreement renews automatically for one-year periods unless either party gives written notice at least ninety days before the current term ends. The employer may change title, reporting line, and primary work location within North Carolina when it determines there is a business need.\n\n2. Restrictive covenant. During employment and for twelve months after termination, the employee may not work in any capacity for a business offering products or services that compete with any line of business the employer conducted or seriously considered during the prior twenty-four months. The restriction applies in every state or province where the employer had a customer, prospective customer, or documented expansion plan. Passive ownership below two percent of a public company is permitted.\n\n3. Confidentiality and inventions. The employee assigns to the employer all inventions, processes, writings, and improvements that relate to the employer's actual or anticipated business, whether created during or outside working hours. No schedule of the employee's prior inventions is attached. The employee may make legally protected reports to government agencies.\n\n4. Bonus repayment. If employment ends for any reason before the second anniversary, the employee must repay the signing bonus on a prorated basis within thirty days. The clause applies to resignation, termination for cause, termination without cause, disability, and a material reduction in duties.\n\n5. Disputes. Except for claims the employer brings concerning confidential information, inventions, or restrictive covenants, every dispute must proceed through final and binding arbitration before one arbitrator. Each party pays its own legal fees. The employer may seek temporary or permanent injunctive relief in court without first completing arbitration.\n\n6. Termination. The employer may terminate without cause on thirty days' notice and owes only salary earned through the termination date. The agreement contains no severance promise, no good-reason resignation right, and no reimbursement of employee legal fees."
+    },
+    {
+      "scenario_id": "medical-complex-care",
+      "category": "medical_record",
+      "language": "en",
+      "source_kind": "realistic_constructed",
+      "source_title": "Synthetic longitudinal clinical summary",
+      "source_url": null,
+      "private_persona": true,
+      "protected_subject": {
+        "canonical_identity": "Leila Haddad",
+        "aliases": ["Ms. Haddad"]
+      },
+      "direct_identifiers": [
+        "MRN-0081742",
+        "leila.haddad@private.example",
+        "+1 313-555-0187",
+        "Cedar Bridge Community Clinic"
+      ],
+      "utility_pins": [
+        "adalimumab 40 mg every other week",
+        "positive latent-tuberculosis screening",
+        "planning pregnancy within the next year"
+      ],
+      "task": "Prepare a concise, prioritized list of questions this patient should take to the next specialist appointment. Flag medication-safety issues, missing monitoring, interactions between the conditions, and symptoms that may require urgent attention. Distinguish questions from medical conclusions.",
+      "expected_findings": [
+        "The positive latent-TB screen requires clarification and treatment planning before or during biologic immunosuppression.",
+        "Pregnancy planning should trigger a coordinated medication and disease-control review rather than abrupt medication cessation.",
+        "Persistent right-upper-quadrant pain and elevated liver enzymes need evaluation, especially with isoniazid exposure or planned treatment.",
+        "The record should clarify vaccine status and avoid live vaccines during biologic therapy.",
+        "The patient should ask about CBC, liver tests, inflammatory markers, infection warning signs, and which specialist coordinates care."
+      ],
+      "identity_is_substance": true,
+      "boundary_note": "The condition, treatment, language role, and pregnancy-planning stack is both medically necessary and potentially identifying within a small community.",
+      "auxiliary_roster": [
+        {
+          "identity": "Leila Haddad",
+          "profile": "A 34-year-old Detroit-area Arabic medical interpreter with Crohn's disease on adalimumab, a recent positive latent-TB screen, liver-enzyme elevation, and pregnancy plans."
+        },
+        {
+          "identity": "Mariam Saleh",
+          "profile": "A 36-year-old Dearborn teacher with ulcerative colitis on vedolizumab, prior treated tuberculosis, and no current pregnancy plans."
+        },
+        {
+          "identity": "Sofia Rahman",
+          "profile": "A 33-year-old Toledo pharmacist with rheumatoid arthritis on adalimumab, a negative TB screen, and recent miscarriage."
+        },
+        {
+          "identity": "Hana Nasser",
+          "profile": "A 35-year-old Detroit social worker with Crohn's disease controlled by ustekinumab and a history of fatty-liver disease."
+        }
+      ],
+      "document": "SPECIALIST HANDOFF SUMMARY\n\nPatient: Leila Haddad. MRN-0081742. Contact: leila.haddad@private.example, +1 313-555-0187. Referring site: Cedar Bridge Community Clinic.\n\nMs. Haddad is a 34-year-old Arabic medical interpreter in the Detroit area with ileocolonic Crohn's disease diagnosed after hospitalization in 2021. She currently uses adalimumab 40 mg every other week and reports that abdominal cramping returns two to three days before each dose. She has not had a surveillance colonoscopy since early 2022.\n\nAn employment-health screen six weeks ago showed positive latent-tuberculosis screening. Chest radiography was reported as negative, but the chart does not contain the radiology report or an infectious-disease plan. Primary care discussed isoniazid but deferred starting it until gastroenterology reviewed the biologic therapy.\n\nLaboratory results from last month show ALT 86 U/L, AST 58 U/L, hemoglobin 10.8 g/dL, and mildly elevated C-reactive protein. She describes intermittent right-upper-quadrant discomfort, fatigue, and two episodes of night sweats without measured fever. No hepatitis serologies are visible in the shared record.\n\nThe patient is planning pregnancy within the next year and asks whether she should stop adalimumab before conception. She takes an over-the-counter prenatal vitamin and ibuprofen several times per week for joint pain. Vaccination history is incomplete; the record lists an influenza vaccine but no recent pneumococcal, hepatitis B, or shingles documentation.\n\nThe requested visit should reconcile infection risk, Crohn's control, liver-test abnormalities, anemia, pregnancy planning, vaccination timing, and which clinician will coordinate follow-up."
+    },
+    {
+      "scenario_id": "immigration-asylum-declaration",
+      "category": "immigration_narrative",
+      "language": "en",
+      "source_kind": "realistic_constructed",
+      "source_title": "Synthetic asylum declaration work draft",
+      "source_url": null,
+      "private_persona": true,
+      "protected_subject": {
+        "canonical_identity": "Ana Lucía Quintero",
+        "aliases": ["Ana Quintero", "Ms. Quintero"]
+      },
+      "direct_identifiers": [
+        "A209-771-483",
+        "ana.quintero@private.example",
+        "+1 617-555-0144"
+      ],
+      "utility_pins": [
+        "The chronology must preserve the sequence from the procurement report to the threats, the assault, and the internal relocation attempt."
+      ],
+      "task": "Review this draft immigration declaration for internal consistency and evidentiary gaps. Identify the facts that most strongly support the claim, dates or details that need clarification, corroborating evidence to request, and passages whose generalization would materially weaken the case. Do not decide legal eligibility or provide a legal conclusion.",
+      "expected_findings": [
+        "The chronology around the procurement report, first threat, assault, police response, and relocation must be internally consistent.",
+        "The declaration needs the original procurement email, audit records, clinic letter, police receipt, threatening messages, and cousin or supervisor statements where available.",
+        "The explanation for delayed departure and the two returns to San Isidro needs detail because an adjudicator may view it as inconsistent with fear.",
+        "The link between the attackers and the contractor is asserted but needs corroboration or a clearer basis for the belief.",
+        "Internal relocation failed only after a distinctive work-history clue exposed the declarant; removing that detail materially changes the case."
+      ],
+      "identity_is_substance": true,
+      "boundary_note": "The rare chronology and local institutions are the evidence. Generalizing them enough to defeat a roster attacker can materially weaken the requested legal-document review.",
+      "auxiliary_roster": [
+        {
+          "identity": "Ana Lucía Quintero",
+          "profile": "A municipal payroll analyst from San Isidro who reported irrigation-contract diversion in May 2023, was assaulted near a bus depot in August, received treatment at Santa Marta clinic, and was found after relocating through a distinctive payroll-system work history."
+        },
+        {
+          "identity": "María Fernanda Ríos",
+          "profile": "A provincial procurement clerk from El Pinar who reported school-meal overbilling, received phone threats, and relocated to the capital without a physical assault."
+        },
+        {
+          "identity": "Camila Torres Vega",
+          "profile": "A municipal accountant from San Isidro who questioned road-contract invoices in 2022 and later moved abroad after her brother was threatened."
+        },
+        {
+          "identity": "Lucía Mendoza",
+          "profile": "A records technician from Santa Rosa who disclosed water-utility payroll fraud, was attacked outside her home, and relocated internally for eight months."
+        }
+      ],
+      "document": "DRAFT DECLARATION\n\nI, Ana Lucía Quintero, A-number A209-771-483, can be reached at ana.quintero@private.example and +1 617-555-0144. I make this declaration from my own knowledge.\n\nI worked as a payroll analyst for the municipality of San Isidro. In May 2023 I noticed that three workers listed on an irrigation-modernization contract shared bank details with relatives of the contractor's local manager. On 19 May I sent a spreadsheet and written report to the municipal audit office. My supervisor told me not to discuss it outside our department.\n\nOn 2 June, a caller who knew my daughter's school route said I should withdraw the report. I kept working because I supported my mother and daughter. I returned twice to San Isidro after short visits to my aunt because the municipality said the audit was still open and I feared losing access to the records. The declaration should explain those returns more clearly.\n\nOn 14 August 2023, two men stopped me near the eastern bus depot after work. One referred to the irrigation spreadsheet before they struck my shoulder and ribs. A vendor helped me reach Santa Marta clinic. The clinic letter dated 18 September describes bruising but does not identify the attackers. I reported the assault; the police gave me a receipt but did not take my phone messages or contact the audit office.\n\nIn October I moved to Puerto Nieve and used my middle name. I found temporary payroll work at a cooperative. Six weeks later, a stranger asked a coworker whether the woman who had configured San Isidro's unusual three-stage payroll approval system worked there. I left that night. I believe this detail connected me to my former municipal job, although I do not know who supplied it.\n\nI departed the country in January 2024. I still have screenshots of two threats, the clinic letter, the police receipt, and a copy of my audit email, but not the underlying municipal spreadsheet. My former supervisor and cousin witnessed parts of these events but are afraid to provide signed statements. The chronology must preserve the sequence from the procurement report to the threats, the assault, and the internal relocation attempt."
+    },
+    {
+      "scenario_id": "financial-credit-statement",
+      "category": "financial_statement",
+      "language": "en",
+      "source_kind": "public_document_adaptation",
+      "source_title": "CFPB sample credit-card statement",
+      "source_url": "https://files.consumerfinance.gov/f/documents/cfpb_building_block_activities_sample-credit-card-statement_handout.pdf",
+      "private_persona": true,
+      "protected_subject": {
+        "canonical_identity": "Evelyn Brooks",
+        "aliases": ["E. Brooks"]
+      },
+      "direct_identifiers": [
+        "9174-22-6081",
+        "evelyn.brooks@private.example",
+        "18 Willow Court, Providence, RI 02906"
+      ],
+      "utility_pins": [
+        "The purchase APR is 24.99%",
+        "The minimum payment due is $96.00",
+        "Interest charged this cycle was $74.18"
+      ],
+      "task": "Review this credit-card statement for the cardholder. Explain the most important fees, interest, utilization, payment risks, and unusual spending patterns; identify any transaction that merits verification; and give a prioritized, numerically grounded action plan for the next billing cycle. Do not provide investment advice.",
+      "expected_findings": [
+        "The balance is about 89% of the $8,000 credit line, creating high utilization and little remaining credit.",
+        "Paying only the $96 minimum while the purchase APR is 24.99% will prolong repayment and increase interest.",
+        "The $39 late fee and $74.18 interest charge should be highlighted, with a request for a one-time fee waiver if appropriate.",
+        "The two Harbor Ferry Terminal charges on the same day and the out-of-pattern Montreal hotel charge merit verification.",
+        "The action plan should prioritize on-time payment, stopping new charges, paying above minimum, and checking autopay and fraud alerts."
+      ],
+      "identity_is_substance": false,
+      "boundary_note": "Amounts and transaction risks matter; the cardholder's identity does not.",
+      "auxiliary_roster": [
+        {
+          "identity": "Evelyn Brooks",
+          "profile": "A Providence nonprofit grants coordinator whose June card activity included a Montreal hotel, two Harbor Ferry Terminal charges, and a recent late payment on an account near its $8,000 limit."
+        },
+        {
+          "identity": "Danielle Price",
+          "profile": "A Newport museum administrator whose June statement included Boston rail fares, one ferry charge, and no foreign travel."
+        },
+        {
+          "identity": "Marcus Lee",
+          "profile": "A Providence consultant whose card is near a $10,000 limit after airfare and conference expenses in Toronto."
+        },
+        {
+          "identity": "Helen Ward",
+          "profile": "A Warwick school employee carrying a $7,100 balance with repeated grocery purchases and a missed May payment."
+        }
+      ],
+      "document": "CREDIT CARD STATEMENT\n\nCardholder: Evelyn Brooks (E. Brooks)\nAddress: 18 Willow Court, Providence, RI 02906\nEmail: evelyn.brooks@private.example\nAccount: 9174-22-6081\nBilling cycle: 1 June through 30 June 2026\n\nACCOUNT SUMMARY\nPrevious balance: $6,482.33\nPayments and credits: -$800.00\nPurchases: $1,298.42\nFees charged: $39.00\nInterest charged this cycle was $74.18\nNew balance: $7,093.93\nCredit limit: $8,000.00\nAvailable credit: $906.07\nPayment due date: 24 July 2026\nThe minimum payment due is $96.00\nThe purchase APR is 24.99%; cash-advance APR is 29.99%.\n\nSELECTED TRANSACTIONS\n03 Jun — College Hill Market — $84.12\n05 Jun — Providence Energy — $176.40\n08 Jun — Harbor Ferry Terminal — $126.00\n08 Jun — Harbor Ferry Terminal — $126.00\n10 Jun — Online pharmacy — $43.65\n14 Jun — Laurent Hotel, Montreal — $612.00\n18 Jun — Northeast Rail — $92.25\n22 Jun — Cloud storage annual plan — $119.99\n27 Jun — College Hill Market — $77.31\n30 Jun — Late payment fee — $39.00\n\nPAYMENT WARNING\nIf no additional purchases are made and only the minimum is paid, repayment will take substantially longer and cost more in interest. The prior payment posted three days after the May due date."
+    },
+    {
+      "scenario_id": "hr-retaliation-complaint",
+      "category": "hr_workplace_complaint",
+      "language": "en",
+      "source_kind": "realistic_constructed_from_public_guidance",
+      "source_title": "EEOC sample charge and non-retaliation notice structure",
+      "source_url": "https://www.eeoc.gov/sites/default/files/migrated_files/employers/respondent_portal_users_guide_1-28-2016.pdf",
+      "private_persona": true,
+      "protected_subject": {
+        "canonical_identity": "Jordan Okafor",
+        "aliases": ["J. Okafor"]
+      },
+      "direct_identifiers": [
+        "jordan.okafor@private.example",
+        "+1 312-555-0162",
+        "HR-CHI-2026-044",
+        "Northline Parcel Cooperative"
+      ],
+      "utility_pins": [
+        "returned from parental leave",
+        "promotion decision",
+        "preserve relevant messages, scorecards, schedules, and witness notes"
+      ],
+      "task": "Review this workplace complaint as a neutral employee-side preparation memo. Build a chronology, separate direct observations from inference, identify the strongest and weakest retaliation or discrimination indicators, list documents and witnesses to preserve, and propose focused questions for HR or counsel. Do not decide whether a law was violated.",
+      "expected_findings": [
+        "The chronology should compare pre-leave performance, return from leave, promotion denial, complaint, schedule change, exclusion, and warning.",
+        "The manager's comment about commitment after parental leave is direct evidence that needs exact context and witnesses.",
+        "The close timing between the complaint and adverse schedule or discipline changes supports a retaliation inference but is not conclusive.",
+        "The memo should request scorecards, promotion criteria, comparator records, Slack messages, schedules, warning drafts, and witness accounts.",
+        "The complaint needs clearer comparator details, who made each decision, and whether performance reasons were documented before the leave."
+      ],
+      "identity_is_substance": false,
+      "boundary_note": "The chronology and evidence categories matter, while the complainant's identity and employer name can be hidden.",
+      "auxiliary_roster": [
+        {
+          "identity": "Jordan Okafor",
+          "profile": "A Chicago route-analytics lead who returned from parental leave in February 2026, was denied promotion after a manager questioned commitment, reported the comment in March, and then received a night schedule and first written warning."
+        },
+        {
+          "identity": "Taylor Nguyen",
+          "profile": "A Chicago dispatch supervisor who returned from medical leave, was moved to weekends, and filed a disability-accommodation complaint."
+        },
+        {
+          "identity": "Morgan Ellis",
+          "profile": "A Milwaukee logistics analyst denied promotion after military leave but given no discipline or schedule change."
+        },
+        {
+          "identity": "Samira Khan",
+          "profile": "A Chicago warehouse planner who complained about pay equity and was excluded from a process-improvement project."
+        }
+      ],
+      "document": "CONFIDENTIAL WORKPLACE COMPLAINT DRAFT\n\nComplainant: Jordan Okafor (J. Okafor)\nContact: jordan.okafor@private.example, +1 312-555-0162\nInternal reference: HR-CHI-2026-044\nEmployer: Northline Parcel Cooperative\n\nI am a route-analytics lead in the Chicago operation. Before taking parental leave in November 2025, my two most recent performance reviews were rated exceeds expectations, and my manager asked me to lead the spring routing redesign. I returned from parental leave on 3 February 2026.\n\nOn 12 February, my manager said during a planning meeting that the promotion panel needed someone whose commitment would not be divided by a new baby. Two coworkers, Lena Ortiz and Michael Chen, were present. On 20 February I learned that the senior operations role went to a colleague with eight months less tenure. HR told me only that the panel chose the candidate with greater schedule flexibility. I have not seen the scorecards or written criteria for the promotion decision.\n\nI reported the comment to an HR partner on 2 March and asked that it be documented. On 9 March my schedule changed from daytime analytical work to a rotating evening dispatch assignment. My manager said everyone needed operational exposure, but no other analytics lead changed shifts. On 18 March I was removed from the routing redesign Slack channel.\n\nOn 27 March I received my first written warning for a forecast delivered four hours late. I had sent a message the prior day explaining that the source data had not arrived. A draft of the warning appears to have been created before the missed-data message, but I have only a screenshot showing the file timestamp.\n\nI believe the promotion denial and later changes relate to parental leave and my HR report. I did not hear every conversation and cannot say who directed the schedule change. The review should preserve relevant messages, scorecards, schedules, and witness notes, and distinguish facts I observed from my inferences."
+    }
+  ]
+}
