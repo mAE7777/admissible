@@ -1,13 +1,13 @@
-# QA: honesty-first verdict milestone
+# Cloak UI and controller acceptance
 
 Date: 2026-07-17
 
-## Verdict
+## Summary
 
-**PASS on executed harness evidence.** The isolated correctness verifier found no correctness or security failure,
-but returned `INCONCLUSIVE` because its own four-viewport Chrome run did not complete. Per the QA anti-fabrication
-fallback, the verdict below uses the separately executed repository harness and does not represent the interrupted
-review as an independent pass.
+The results below come from the repository test and evaluation runs. One automated
+four-viewport browser review did not finish, so its result is reported as incomplete rather
+than as a pass; the summary uses only the checks that actually ran and the separately executed
+repository suite.
 
 ## Acceptance evidence
 
@@ -21,19 +21,16 @@ review as an independent pass.
 | Privacy and controller invariants did not regress | HOLDS | Fresh controller traces and the 86-test backend suite preserve sanitized-only fixed GPT-5.6 envelopes, wrong-identity/fabricated-quote no-edit behavior, task-fact protection, rollback, fail-closed model checks, and exact local restore. |
 | UI is responsive and accessible | HOLDS | Chrome/Playwright passed 375×667, 768×1024, 1280×720, and 1920×1080 for landing, pass, and refusal: no overflow, contrast failure, unnamed control, small mobile target, console/page error, failed request, or non-loopback request. |
 
-Gap classifications: none (`missing=0`, `partial=0`, `contradicts=0`, `unrequested=0`).
-
-## Gates
+## Checks that ran
 
 - Backend: 86 passed; one third-party Starlette deprecation warning.
 - Frontend: 3 files, 6 tests passed.
 - Production build: passed.
 - Ruff and mypy: passed.
-- Design lint: 0 failures. The 18 uppercase-label warnings are intentional forensic metadata, not decorative headings.
+- Design and style lint: 0 failures. The 18 uppercase-label warnings are intentional forensic metadata, not decorative headings.
 - JavaScript production audit: no known vulnerabilities.
 - Python environment audit: no known vulnerabilities; the editable local package is named as skipped.
-- Generic deterministic wrapper: its known secrets check flags ignored, mode-0600 `.env.local`; Git confirms the
-  file is untracked. The wrapper also skips project lint/typecheck discovery, which the explicit commands above cover.
+- Secret scan: the only flag was the mode-0600 `.env.local`, which Git confirms is untracked.
 
 ## Render evidence
 
@@ -44,6 +41,7 @@ Gap classifications: none (`missing=0`, `partial=0`, `contradicts=0`, `unrequest
 
 ## Boundaries
 
-No new live GPT-5.6 call was made. Product egress was grounded with fake-client envelopes and recorded fixtures. A
-real manual copy into an external assistant and rendered paste-back was not repeated in this milestone; existing exact
-restore tests remain green. Intent fidelity is owned by `$loyal`; this report owns correctness and security only.
+No new live GPT-5.6 call was made. Product egress was grounded with fake-client envelopes and
+recorded fixtures. This note covers correctness, security, and the rendered UI. It does not
+re-run the manual copy-into-an-external-assistant-and-paste-back flow; the existing exact-restore
+tests remain green.

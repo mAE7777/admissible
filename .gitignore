@@ -16,8 +16,7 @@ __pycache__/
 *.pyc
 *.tsbuildinfo
 
-# Local product-development notes. These are intentionally not part of the
-# public project history.
+# Local working files, not published.
 /brief.md
 /discovery/
 /fix-log.md
