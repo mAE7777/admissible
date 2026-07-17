@@ -1,0 +1,46 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+node_modules/
+dist/
+.vite/
+coverage/
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.pyc
+*.tsbuildinfo
+
+# Local product-development notes. These are intentionally not part of the
+# public project history.
+/brief.md
+/discovery/
+/fix-log.md
+/intent-anchor.md
+/intent-ledger.md
+/key-learnings.md
+/slices.md
+
+# Keep the reproducible corpora, current reports, caches, and final render
+# evidence. Ignore superseded QA output and ad-hoc reruns by default.
+!/qa-reports/
+/qa-reports/*
+!/qa-reports/benchmark-smoke-cases.json
+!/qa-reports/benchmark-smoke-report.md
+!/qa-reports/benchmark-smoke-results.json
+!/qa-reports/playwright_ui_check.py
+!/qa-reports/qa-honesty-verdict.md
+!/qa-reports/scenario-acceptance-cases.json
+!/qa-reports/scenario-acceptance-report.md
+!/qa-reports/scenario-acceptance-results.json
+!/qa-reports/screenshots/
+/qa-reports/screenshots/*
+!/qa-reports/screenshots/qa-honest-verdict-passed-desktop.png
+!/qa-reports/screenshots/qa-honest-verdict-passed-mobile.png
+!/qa-reports/screenshots/qa-honest-verdict-refusal-desktop.png
+!/qa-reports/screenshots/qa-honest-verdict-refusal-mobile.png

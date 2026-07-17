@@ -1,0 +1,17 @@
+{
+  "name": "cloak",
+  "private": true,
+  "packageManager": "pnpm@10.17.0",
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c green,cyan \"pnpm dev:api\" \"pnpm dev:web\"",
+    "dev:api": "uv run --project backend uvicorn cloak.main:app --reload --port 8787",
+    "dev:web": "pnpm --dir frontend dev",
+    "build": "pnpm --dir frontend build",
+    "test": "pnpm --dir frontend test",
+    "check": "pnpm build && pnpm test && uv run --project backend pytest"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
+
