@@ -1,0 +1,34 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.17.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install backend dependencies
+        run: uv sync --project backend --frozen --all-groups
+      - name: Build frontend
+        run: pnpm build
+      - name: Test frontend
+        run: pnpm test
+      - name: Test backend
+        run: uv run --project backend pytest
