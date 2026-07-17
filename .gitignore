@@ -17,6 +17,7 @@ __pycache__/
 *.tsbuildinfo
 
 # Local working files, not published.
+/notes/
 /brief.md
 /discovery/
 /fix-log.md
