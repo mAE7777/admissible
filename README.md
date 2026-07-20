@@ -5,8 +5,11 @@
 Put your real work in front of a frontier model. What clears, cleared against a live attack. What
 doesn't, never leaves. What comes back is yours again.
 
-Not a redactor. A gate: it runs the real attack against your document, rules on whether it may
-pass, and closes the handoff on anything that does not clear.
+It redacts — names become natural, reversible surrogates, and the clues that give a person away are
+generalized — but it refuses to stop there and call the result clean, the way every redaction tool
+does. It attacks its own redaction with a real GPT-5.6 adversary, rules on whether the redaction
+actually held, and closes the handoff on anything that does not clear. What clears comes back to you
+exactly, real names restored.
 
 ## How the ruling is earned
 
