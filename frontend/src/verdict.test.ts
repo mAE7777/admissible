@@ -29,8 +29,9 @@ describe("verdictFrom", () => {
   it("scopes a passing result to the configured attacker and tested text", () => {
     const verdict = verdictFrom(event({}));
     expect(verdict?.kind).toBe("passed");
-    expect(verdict?.headline).toContain("This attacker could no longer identify");
-    expect(verdict?.integrity).toContain("not a guarantee");
+    expect(verdict?.label).toBe("Cleared");
+    expect(verdict?.headline).toContain("could not identify the subject");
+    expect(verdict?.integrity).toContain("not a grant of anonymity");
     expect(verdict?.excludedScope).toContain("external records");
   });
 
@@ -40,16 +41,17 @@ describe("verdictFrom", () => {
       event({ phase: "run_blocked", status: "blocked", conflicting_facts: [fact, fact] }),
     );
     expect(verdict?.kind).toBe("refused");
+    expect(verdict?.label).toBe("Held");
     expect(verdict?.conflictingFacts).toEqual([fact]);
     expect(verdict?.excludedScope).toContain("web data");
-    expect(verdict?.integrity).toContain("will not fake privacy");
+    expect(verdict?.integrity).toContain("does not trade away the facts");
   });
 
   it("does not turn a generic blocked run into a false task-conflict claim", () => {
     const verdict = verdictFrom(
       event({ phase: "run_blocked", status: "blocked", detail: "Returned model mismatch." }),
     );
-    expect(verdict?.headline).toBe("Cloak did not establish a shareable result.");
+    expect(verdict?.headline).toBe("Held. No clearance was established.");
     expect(verdict?.conflictingFacts).toEqual([]);
     expect(verdict?.explanation).toBe("Returned model mismatch.");
   });

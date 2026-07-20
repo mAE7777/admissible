@@ -5,8 +5,8 @@ from typing import Any
 
 import pytest
 
-from cloak.models import SanitizedEnvelope
-from cloak.services.attacker import ATTACKER_MODEL, AttackerOutput, OpenAIAttacker, model_is_gpt_56
+from admissible.models import SanitizedEnvelope
+from admissible.services.attacker import ATTACKER_MODEL, AttackerOutput, OpenAIAttacker, model_is_gpt_56
 
 
 class FakeResponses:

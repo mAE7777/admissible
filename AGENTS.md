@@ -1,4 +1,4 @@
-# Cloak Working Notes
+# Admissible Working Notes
 
 ## Product invariants
 
@@ -26,7 +26,7 @@
 - `pnpm test`
 - `uv sync --project backend --all-groups`
 - `uv run --project backend pytest`
-- `uv run --project backend uvicorn cloak.main:app --reload --port 8787`
+- `uv run --project backend uvicorn admissible.main:app --reload --port 8787`
 
 ## Conventions
 

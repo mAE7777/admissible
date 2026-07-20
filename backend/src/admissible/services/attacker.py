@@ -9,7 +9,7 @@ from openai import AsyncOpenAI
 from openai.types.shared_params import Reasoning
 from pydantic import Field
 
-from cloak.models import (
+from admissible.models import (
     AttackResult,
     IdentityHypothesis,
     SanitizedEnvelope,

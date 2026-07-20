@@ -164,7 +164,10 @@ class RunResponse(StrictModel):
 
 
 class RestoreRequest(StrictModel):
-    text: str = Field(max_length=100_000)
+    # Bounded to the same ceiling as a pasted document. A restore target is an answer about a
+    # candidate this product produced, so nothing legitimate exceeds the document limit, and the
+    # mutation scan is O(handles x length).
+    text: str = Field(max_length=12_000)
 
 
 class RestoreResult(StrictModel):

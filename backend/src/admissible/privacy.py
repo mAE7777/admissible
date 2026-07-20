@@ -8,7 +8,7 @@ from collections import Counter
 from lingua import Language, LanguageDetectorBuilder
 from rapidfuzz.distance import Levenshtein
 
-from cloak.models import GroundedEvidence, SanitizedCandidate, UtilityLedger
+from admissible.models import GroundedEvidence, SanitizedCandidate, UtilityLedger
 
 MAX_CODEPOINTS = 12_000
 MAX_PER_PASS_EDIT_RATIO = 0.20

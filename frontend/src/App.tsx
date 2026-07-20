@@ -201,7 +201,7 @@ function App() {
     <div className="app-shell">
       <header className="topbar">
         <button className="wordmark" onClick={reset} aria-label="Start over">
-          cloak<span className="wordmark-mark">/</span>
+          admissible<span className="wordmark-mark">/</span>
         </button>
         <p className="promise">Original text, real identifiers, the replacement map, and restored answers stay on this device.</p>
         <div className="health" aria-label="System status">
@@ -227,7 +227,7 @@ function App() {
           {stage === "paste" && (
             <div className="paste-stage">
               <p className="landing-thesis">
-                Cloak shows how GPT-5.6 can identify someone, fixes only the clues your task can spare,
+                Admissible shows how GPT-5.6 can identify someone, fixes only the clues your task can spare,
                 and refuses when privacy would require damaging the document.
               </p>
               <textarea
@@ -251,10 +251,10 @@ function App() {
                   {busy ? "Finding identifiers…" : "Find identifiers"}
                 </button>
                 <button className="secondary-button" disabled={busy} onClick={() => loadRecorded("harbor")}>
-                  Watch Cloak fix a document
+                  Watch the gate clear a document
                 </button>
                 <button className="refusal-button" disabled={busy} onClick={() => loadRecorded("task-conflict")}>
-                  Watch Cloak refuse a document
+                  Watch the gate hold a document
                 </button>
               </div>
             </div>
@@ -294,7 +294,7 @@ function App() {
                     </label>
                   ))
                 ) : (
-                  <p className="quiet">No obvious identifiers found. Cloak will still replace the protected subject locally.</p>
+                  <p className="quiet">No obvious identifiers found. Admissible will still replace the protected subject locally.</p>
                 )}
               </fieldset>
               <label className="pin-field">
@@ -302,7 +302,7 @@ function App() {
                 <textarea
                   value={task}
                   onChange={(event) => setTask(event.target.value)}
-                  placeholder="What should the downstream AI do with this document? Cloak uses this to lock the facts the answer needs."
+                  placeholder="What should the downstream AI do with this document? Admissible uses this to lock the facts the answer needs."
                 />
               </label>
               <label className="pin-field">
@@ -462,7 +462,7 @@ function VerdictPanel({ verdict }: { verdict: RunVerdict }) {
 
         {verdict.conflictingFacts.length > 0 && (
           <div className="verdict-conflicts">
-            <h3>The facts Cloak refused to remove</h3>
+            <h3>The facts Admissible refused to remove</h3>
             <ul>
               {verdict.conflictingFacts.map((fact) => <li key={fact}>{fact}</li>)}
             </ul>
@@ -570,7 +570,7 @@ function stageLabel(stage: Stage) {
 function documentTitle(stage: Stage) {
   return {
     paste: "See what this document gives away.",
-    review: "Choose what Cloak may replace.",
+    review: "Choose what Admissible may replace.",
     ready: "Private working copy",
     running: "Testing the working copy",
     finished: "Final verdict",
@@ -578,7 +578,7 @@ function documentTitle(stage: Stage) {
 }
 
 function message(cause: unknown): string {
-  return cause instanceof Error ? cause.message : "Cloak stopped without a verdict.";
+  return cause instanceof Error ? cause.message : "Admissible stopped without a verdict.";
 }
 
 export default App;

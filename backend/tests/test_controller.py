@@ -4,8 +4,8 @@ from collections.abc import Iterable
 
 import pytest
 
-from cloak.controller import Controller, parse_sse_payload
-from cloak.models import (
+from admissible.controller import Controller, parse_sse_payload
+from admissible.models import (
     AttackResult,
     ConfirmSessionRequest,
     IdentityHypothesis,
@@ -13,7 +13,7 @@ from cloak.models import (
     ProtectedSubject,
     SanitizedEnvelope,
 )
-from cloak.sessions import SessionStore
+from admissible.sessions import SessionStore
 
 DOCUMENT = (
     "Mara Voss led the Harborlight reporting project for a regional newsroom with a small team. "

@@ -7,13 +7,13 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-import cloak.main as main_module
-from cloak.benchmark import (
+import admissible.main as main_module
+from admissible.benchmark import (
     load_benchmark_corpus,
     naive_direct_identifier_candidate,
     validate_result_cache_models,
 )
-from cloak.models import AttackResult, SanitizedEnvelope
+from admissible.models import AttackResult, SanitizedEnvelope
 
 
 class CapturingAttacker:
@@ -60,7 +60,7 @@ def test_benchmark_route_attacks_only_bundled_raw_or_naive_fixture(monkeypatch) 
         raw = client.post("/api/benchmark-smoke/distinctive-alan-turing/raw", json={})
         naive = client.post("/api/benchmark-smoke/distinctive-alan-turing/direct_identifier_only", json={})
         missing = client.post("/api/benchmark-smoke/not-a-case/raw", json={})
-        invalid = client.post("/api/benchmark-smoke/distinctive-alan-turing/cloak", json={})
+        invalid = client.post("/api/benchmark-smoke/distinctive-alan-turing/admissible", json={})
         bodyless = client.post("/api/benchmark-smoke/distinctive-alan-turing/raw")
         document_injection = client.post(
             "/api/benchmark-smoke/distinctive-alan-turing/raw",

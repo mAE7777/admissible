@@ -5,7 +5,7 @@ import asyncio
 import statistics
 import time
 
-from cloak.services.ollama import OllamaAnonymizer
+from admissible.services.ollama import OllamaAnonymizer
 
 CANDIDATE = (
     "[[CX_MFRGGZDFMZTWQ2LK_4d2c6a1f]] led a reporting project for a regional newsroom. "

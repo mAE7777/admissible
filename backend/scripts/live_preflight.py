@@ -29,7 +29,7 @@ def main() -> int:
         health.raise_for_status()
         health_payload = health.json()
         if not health_payload["ollama_ready"] or not health_payload["attacker_ready"]:
-            raise RuntimeError("Cloak dependencies are not both ready.")
+            raise RuntimeError("Admissible dependencies are not both ready.")
 
         created = client.post("/api/sessions", json={"text": DOCUMENT})
         created.raise_for_status()

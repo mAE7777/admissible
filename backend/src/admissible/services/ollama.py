@@ -8,8 +8,8 @@ from typing import Protocol
 
 import httpx
 
-from cloak.models import PatchProposal
-from cloak.privacy import TOKEN_PATTERN, repair_sentence_replacement
+from admissible.models import PatchProposal
+from admissible.privacy import TOKEN_PATTERN, repair_sentence_replacement
 
 REPLACEMENT_SCHEMA = {
     "type": "object",

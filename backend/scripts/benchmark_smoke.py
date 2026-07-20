@@ -10,15 +10,15 @@ from typing import Any, Literal, cast
 
 import httpx
 
-from cloak.benchmark import (
+from admissible.benchmark import (
     BenchmarkCase,
     corpus_fingerprint,
     load_benchmark_corpus,
     validate_result_cache_models,
 )
-from cloak.controller import CONTROLLER_PROTOCOL_VERSION
-from cloak.models import AttackResult, BenchmarkAttackResponse
-from cloak.privacy import identity_rank
+from admissible.controller import CONTROLLER_PROTOCOL_VERSION
+from admissible.models import AttackResult, BenchmarkAttackResponse
+from admissible.privacy import identity_rank
 
 BASE_URL = "http://127.0.0.1:8787"
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -29,7 +29,7 @@ CONDITIONS: tuple[Condition, ...] = ("raw", "direct_identifier_only", "cloak")
 CONDITION_LABELS: tuple[tuple[Condition, str], ...] = (
     ("raw", "Raw synthetic document"),
     ("direct_identifier_only", "Presidio + opaque direct identifiers"),
-    ("cloak", "Cloak core loop"),
+    ("cloak", "Admissible core loop"),
 )
 SANITY_CASE_IDS = (
     "direct-ada-lovelace",
@@ -269,10 +269,11 @@ def write_report(path: Path, cases: list[BenchmarkCase], results: dict[str, Any]
         }
     )
     headline = (
-        f"raw {rates['raw']:.0%} → naive redaction {rates['direct_identifier_only']:.0%} → Cloak {rates['cloak']:.0%}"
+        f"raw {rates['raw']:.0%} → naive redaction {rates['direct_identifier_only']:.0%} "
+        f"→ Admissible {rates['cloak']:.0%}"
     )
     lines = [
-        "# Cloak benchmark smoke set",
+        "# Admissible benchmark smoke set",
         "",
         f"- Date: {datetime.now().astimezone().date().isoformat()}",
         f"- Status: **{'complete' if complete else 'partial'} reported smoke set**",
@@ -295,13 +296,13 @@ def write_report(path: Path, cases: list[BenchmarkCase], results: dict[str, Any]
         *rows,
         "",
         (
-            f"Against the naive baseline, Cloak changed the observed rate by "
+            f"Against the naive baseline, Admissible changed the observed rate by "
             f"{(rates['cloak'] - rates['direct_identifier_only']) * 100:+.1f} percentage points. "
             "This sample is too small to treat that difference as validated."
         ),
         "",
         (
-            "Raw and naive conditions use one medium-effort attack each. Cloak uses the production core loop: "
+            "Raw and naive conditions use one medium-effort attack each. Admissible uses the production core loop: "
             "medium-effort discovery/post-edit attacks. The stack-aware controller can retire up to two grounded "
             "clues per attack and seven total edits, then "
             "requires a separate high-effort holdout. Causal deepening is disabled."
@@ -311,7 +312,7 @@ def write_report(path: Path, cases: list[BenchmarkCase], results: dict[str, Any]
         "",
         (
             "The pre-fix run on these exact fixtures and the same GPT-5.6 attacker was **raw 100% → naive 60% → "
-            "Cloak 53% (8/15)**. The stack-aware controller reduced Cloak to **33% (5/15)**, a 20-point "
+            "Admissible 53% (8/15)**. The stack-aware controller reduced Admissible to **33% (5/15)**, a 20-point "
             "improvement. Single-clue re-identification fell from 3/5 to 1/5; aggregate re-identification fell "
             "from 5/5 to 4/5. Direct-PII controls remained 0/5."
         ),
@@ -319,7 +320,7 @@ def write_report(path: Path, cases: list[BenchmarkCase], results: dict[str, Any]
         (
             "This is still a failed near-zero aspiration, especially for aggregate cases. The one aggregate pass "
             "shows that the controller can exhaust a removable clue stack. Each of the four residual aggregate "
-            "cases has a must-preserve sentence that itself describes the subject's distinctive arc; Cloak blocks "
+            "cases has a must-preserve sentence that itself describes the subject's distinctive arc; Admissible blocks "
             "instead of deleting that pinned substance or claiming a pass."
         ),
         "",
@@ -338,7 +339,7 @@ def write_report(path: Path, cases: list[BenchmarkCase], results: dict[str, Any]
         for condition, condition_label in (
             ("raw", "Raw"),
             ("direct_identifier_only", "Naive"),
-            ("cloak", "Cloak"),
+            ("cloak", "Admissible"),
         ):
             scored = [case_results.get(case.case_id, {}).get("conditions", {}).get(condition, {}) for case in matching]
             scored = [result for result in scored if result.get("status") == "ok"]
@@ -352,7 +353,7 @@ def write_report(path: Path, cases: list[BenchmarkCase], results: dict[str, Any]
             "## Per-case outcomes",
             "",
             (
-                "| Case | Protected subject | Difficulty | Raw | Naive | Cloak | Full-loop outcome | Calls | "
+                "| Case | Protected subject | Difficulty | Raw | Naive | Admissible | Full-loop outcome | Calls | "
                 "Substance-bound |"
             ),
             "|---|---|---|---|---|---|---|---:|---|",
@@ -360,12 +361,12 @@ def write_report(path: Path, cases: list[BenchmarkCase], results: dict[str, Any]
     )
     for case in cases:
         conditions = case_results.get(case.case_id, {}).get("conditions", {})
-        cloak = conditions.get("cloak", {})
+        admissible = conditions.get("cloak", {})
         case_calls = sum(int(item.get("calls", 0)) for item in conditions.values())
         lines.append(
             f"| `{case.case_id}` | {case.protected_subject.canonical_identity} | {labels[case.difficulty]} | "
             f"{_condition_cell(conditions.get('raw'))} | {_condition_cell(conditions.get('direct_identifier_only'))} | "
-            f"{_condition_cell(cloak)} | {cloak.get('final_phase', 'not run')} | {case_calls} | "
+            f"{_condition_cell(admissible)} | {admissible.get('final_phase', 'not run')} | {case_calls} | "
             f"{'yes' if case.identity_is_substance else 'no'} |"
         )
 
@@ -374,7 +375,7 @@ def write_report(path: Path, cases: list[BenchmarkCase], results: dict[str, Any]
         for case in cases
         if case_results.get(case.case_id, {}).get("conditions", {}).get("cloak", {}).get("reidentified") is True
     ]
-    lines.extend(["", "## Residual Cloak re-identifications", ""])
+    lines.extend(["", "## Residual Admissible re-identifications", ""])
     if residuals:
         for case, result in residuals:
             evidence = result.get("subject_evidence_quotes") or []
@@ -421,13 +422,13 @@ def write_report(path: Path, cases: list[BenchmarkCase], results: dict[str, Any]
             "## Interpretation and limits",
             "",
             (
-                "- Cases were authored from scratch inside the Cloak repository; no external dataset or repository "
-                "was imported."
+                "- Cases were authored from scratch inside the Admissible repository; no external dataset "
+                "or repository was imported."
             ),
             (
                 "- The raw condition sends only these committed synthetic fixtures through a case-ID-only loopback "
                 "route whose strict empty control body rejects document text. It is not a path for user documents "
-                "and does not weaken Cloak's product boundary."
+                "and does not weaken Admissible's product boundary."
             ),
             (
                 "- Every full-set case had to be recovered from its raw document before its baselines were scored. "
@@ -435,7 +436,7 @@ def write_report(path: Path, cases: list[BenchmarkCase], results: dict[str, Any]
             ),
             (
                 "- The naive baseline uses Presidio `PatternRecognizer` rules for direct contact/number spans plus "
-                "Cloak's confirmed subject aliases, then replaces those exact values with local opaque tokens. "
+                "Admissible's confirmed subject aliases, then replaces those exact values with local opaque tokens. "
                 "It performs no inference."
             ),
             (
@@ -478,11 +479,11 @@ def condition_cache_is_current(condition: Condition, result: object) -> bool:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run Cloak's bounded synthetic re-identification smoke set.")
+    parser = argparse.ArgumentParser(description="Run Admissible's bounded synthetic re-identification smoke set.")
     parser.add_argument("mode", choices=("sanity", "full"))
     parser.add_argument("--case-id", action="append", default=[], dest="case_ids")
     parser.add_argument("--max-new-remote-calls", type=int, default=24)
-    parser.add_argument("--rerun-cloak", action="store_true")
+    parser.add_argument("--rerun-admissible", action="store_true")
     parser.add_argument("--results", type=Path, default=DEFAULT_RESULTS)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()

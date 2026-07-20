@@ -6,7 +6,7 @@ describe("copyPayload", () => {
     const candidate = "Ask Avery Vale for a summary.";
     const payload = copyPayload(candidate, ["Avery Vale"]);
     expect(payload.startsWith(TOKEN_INSTRUCTION)).toBe(true);
-    expect(payload).toContain("Cloak replacements: Avery Vale");
+    expect(payload).toContain("Admissible replacements: Avery Vale");
     expect(payload.endsWith(candidate)).toBe(true);
   });
 });

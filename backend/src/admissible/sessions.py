@@ -5,7 +5,7 @@ import time
 import uuid
 from dataclasses import dataclass, field
 
-from cloak.models import (
+from admissible.models import (
     ConfirmSessionRequest,
     ConfirmSessionResponse,
     IdentifierCandidate,
@@ -13,24 +13,64 @@ from cloak.models import (
     SanitizedCandidate,
     SessionCreateResponse,
 )
-from cloak.privacy import candidate_from_text, english_scope_supported, normalize_input
-from cloak.vault import LocalVault
+from admissible.privacy import candidate_from_text, english_scope_supported, normalize_input
+from admissible.vault import LocalVault
 
 EMAIL = re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.IGNORECASE)
 PHONE = re.compile(r"(?<!\w)(?:\+?1[-.\s]?)?(?:\(?\d{3}\)?[-.\s]?)\d{3}[-.\s]?\d{4}(?!\w)")
 SSN = re.compile(r"(?<!\d)\d{3}-\d{2}-\d{4}(?!\d)")
 PERSON_ATOM = r"[A-ZÀ-ÖØ-Þ][A-Za-zÀ-ÖØ-öø-ÿ'’\-]{1,30}"
 PERSON = re.compile(rf"\b(?:{PERSON_ATOM})(?:\s+{PERSON_ATOM}){{1,3}}\b")
+STREET_WORD = r"[A-Za-z0-9][A-Za-z0-9'’\-]*\.?"
+# A locality tail: ", Portland, OR 97205" or ", Reno NV 89501" (the comma before the state is
+# optional in common usage, and omitting it previously left the tail unmatched).
+LOCALITY_TAIL = (
+    r"(?:,[ \t]*[A-Za-z][A-Za-z .'-]{0,40},?[ \t]*[A-Z]{2}[ \t]+\d{5}(?:-\d{4})?)?"
+)
 ADDRESS = re.compile(
-    r"(?<!\w)\d{1,6}\s+[A-Za-z][A-Za-z0-9 .'’-]{1,80}"
-    r"(?:Street|St\.?|Avenue|Ave\.?|Road|Rd\.?|Lane|Ln\.?|Drive|Dr\.?|Court|Ct\.?|Way)"
-    r"(?:,\s*[A-Za-z][A-Za-z .'-]{1,40},\s*[A-Z]{2}\s+\d{5}(?:-\d{4})?)?",
+    r"(?<!\w)(?:"
+    # Street form: 742 Cedar Avenue[, Portland, OR 97205]
+    rf"\d{{1,6}}[ \t]+(?:{STREET_WORD}[ \t]+){{1,8}}"
+    r"(?:Street|Avenue|Boulevard|Parkway|Terrace|Circle|Highway|Road|Lane|Drive|Court|"
+    r"St|Ave|Blvd|Pkwy|Ter|Cir|Hwy|Rd|Ln|Dr|Ct|Way)\b\.?"
+    rf"{LOCALITY_TAIL}"
+    r"|"
+    # Post-office-box form: PO Box 4417[, Reno NV 89501]. A real, common mailing identifier that
+    # the street-suffix form structurally cannot match.
+    rf"(?:P\.?[ \t]?O\.?|Post[ \t]+Office)[ \t]+Box[ \t]+\d{{1,8}}{LOCALITY_TAIL}"
+    r")",
     re.IGNORECASE,
+)
+# Tokens that appear inside postal/address fragments and are never personal-name parts. Used to
+# stop address debris from being offered as a Person once the address patterns decline it.
+US_STATE_CODES = frozenset(
+    "AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ "
+    "NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY DC PR VI GU AS MP".split()
+)
+NON_NAME_TOKENS = frozenset(
+    {"po", "p.o", "box", "suite", "ste", "apt", "apartment", "unit", "floor", "fl", "rm", "room",
+     "building", "bldg", "attn", "care", "c/o", "mailstop", "postal", "zip"}
 )
 ORGANIZATION = re.compile(
     r"\b(?:[A-Z][A-Za-z'’&.-]*\s+){1,6}"
     r"(?:Clinic|College|Company|Cooperative|Corporation|Corp\.?|Foundation|Group|Hospital|Hotel|"
     r"Institute|LLC|Ltd\.?|Municipality|Office|School|Systems?)\b"
+)
+ORGANIZATION_ATOM = r"(?:[A-ZÀ-ÖØ-Þ][A-Za-zÀ-ÖØ-öø-ÿ0-9'’&\-]{0,40}|&)"
+ORGANIZATION_ROLE = (
+    r"administrator|analyst|associate|attorney|chief|consultant|coordinator|counsel|designer|director|"
+    r"doctor|employee|engineer|executive|lead|manager|nurse|officer|operator|partner|researcher|specialist|"
+    r"supervisor|teacher|technician|worker"
+)
+ORGANIZATION_AFTER_WORK_CUE = re.compile(
+    rf"\b(?:(?i:{ORGANIZATION_ROLE})\s+(?i:at|for)|"
+    rf"(?i:employed by|works? (?:at|for)|working (?:at|for)|joined))\s+"
+    rf"(?P<organization>{ORGANIZATION_ATOM}(?:\s+{ORGANIZATION_ATOM}){{0,5}})"
+    r"(?=\s+(?i:in|on|as|where|which|that|who|and|but|from|during|after|before|since|until)\b|[,.;:!?]|$)"
+)
+ORGANIZATION_POSSESSIVE = re.compile(
+    rf"\b(?P<organization>{ORGANIZATION_ATOM}(?:\s+{ORGANIZATION_ATOM}){{0,5}})['’]s\s+"
+    rf"(?i:{ORGANIZATION_ROLE})\b"
 )
 IDENTIFIER_CODE = re.compile(
     r"(?<![A-Za-z0-9])(?:[A-Z][A-Z0-9]{1,8}(?:-[A-Z0-9]+){1,4}|\d{4}-\d{2}-\d{4})(?![A-Za-z0-9])"
@@ -62,11 +102,37 @@ def _alias_matches_canonical(alias: str, canonical: str) -> bool:
     )
 
 
+def _plausible_person(value: str) -> bool:
+    """Reject address/postal debris that the Person pattern would otherwise offer as a name.
+
+    The Person pattern matches any run of capitalised words, so when an address form declines a
+    fragment (a PO box, a bare "City ST"), its pieces resurface as person candidates. A junk
+    candidate on the confirmation surface erodes trust in every real candidate beside it, so the
+    filter is deliberately narrow: only tokens that are never personal-name parts.
+    """
+    parts = [part.rstrip(".") for part in PERSON_TITLE.sub("", value.strip()).split()]
+    if not parts:
+        return False
+    return not any(part.casefold() in NON_NAME_TOKENS or part in US_STATE_CODES for part in parts)
+
+
+def _organization_spans(text: str) -> list[tuple[int, int, str]]:
+    spans: list[tuple[int, int, str]] = []
+    for match in ORGANIZATION.finditer(text):
+        spans.append((*match.span(), match.group(0)))
+    for pattern in (ORGANIZATION_AFTER_WORK_CUE, ORGANIZATION_POSSESSIVE):
+        for match in pattern.finditer(text):
+            start, end = match.span("organization")
+            spans.append((start, end, match.group("organization")))
+    return list(dict.fromkeys(spans))
+
+
 @dataclass
 class Session:
     session_id: str
     raw_text: str
     suggested_identifiers: set[str] = field(default_factory=set)
+    suggested_identifier_labels: dict[str, str] = field(default_factory=dict)
     suggested_subjects: set[str] = field(default_factory=set)
     created_at: float = field(default_factory=time.monotonic)
     updated_at: float = field(default_factory=time.monotonic)
@@ -105,15 +171,12 @@ class SessionStore:
         normalized = normalize_input(text)
         session_id = uuid.uuid4().hex
         identifiers = suggest_identifiers(normalized)
-        subjects: list[str] = []
-        for match in PERSON.finditer(normalized):
-            value = match.group(0)
-            if value not in subjects:
-                subjects.append(value)
+        subjects = list(dict.fromkeys(candidate.value for candidate in identifiers if candidate.label == "Person"))
         self._sessions[session_id] = Session(
             session_id=session_id,
             raw_text=normalized,
             suggested_identifiers={candidate.value for candidate in identifiers},
+            suggested_identifier_labels={candidate.value: candidate.label for candidate in identifiers},
             suggested_subjects=set(subjects[:8]),
         )
         return SessionCreateResponse(
@@ -135,10 +198,10 @@ class SessionStore:
     def confirm(self, session_id: str, request: ConfirmSessionRequest) -> ConfirmSessionResponse:
         session = self.get(session_id)
         if not english_scope_supported(session.raw_text) or not english_scope_supported(request.task):
-            raise ValueError("Cloak currently supports English documents and tasks only.")
+            raise ValueError("Admissible currently supports English documents and tasks only.")
         aliases = [request.subject.canonical_identity, *request.subject.aliases]
         if request.subject.canonical_identity not in session.suggested_subjects:
-            raise ValueError("The protected subject must come from Cloak's local person suggestions.")
+            raise ValueError("The protected subject must come from Admissible's local person suggestions.")
         invalid_aliases = [
             alias
             for alias in request.subject.aliases
@@ -154,10 +217,15 @@ class SessionStore:
             raise ValueError("Every confirmed identifier must occur exactly in the document.")
         unsupported_ids = [value for value in request.identifiers if value not in session.suggested_identifiers]
         if unsupported_ids:
-            raise ValueError("Confirmed identifiers must come from Cloak's local identifier suggestions.")
+            raise ValueError("Confirmed identifiers must come from Admissible's local identifier suggestions.")
         session.subject = request.subject
         session.task = request.task
-        sanitized = session.vault.sanitize(session.raw_text, aliases, request.identifiers)
+        sanitized = session.vault.sanitize(
+            session.raw_text,
+            aliases,
+            request.identifiers,
+            identifier_labels={value: session.suggested_identifier_labels[value] for value in request.identifiers},
+        )
         missing_pins = [pin for pin in request.pins if pin not in sanitized]
         if missing_pins:
             raise ValueError("Pins must remain exact after identifier substitution.")
@@ -183,21 +251,28 @@ class SessionStore:
 
 
 def suggest_identifiers(text: str) -> list[IdentifierCandidate]:
-    found: list[tuple[str, str]] = []
+    found: list[tuple[str, str, int, int]] = []
     for label, pattern in (
         ("Email", EMAIL),
         ("Phone", PHONE),
         ("SSN", SSN),
         ("Address", ADDRESS),
-        ("Organization", ORGANIZATION),
         ("Identifier", IDENTIFIER_CODE),
     ):
         for match in pattern.finditer(text):
-            found.append((label, match.group(0)))
-    for value in dict.fromkeys(PERSON.findall(text)):
-        found.append(("Person", value))
+            found.append((label, match.group(0), *match.span()))
+    found.extend(("Organization", value, start, end) for start, end, value in _organization_spans(text))
+    protected_spans = [(start, end) for label, _value, start, end in found if label in {"Address", "Organization"}]
+    for match in PERSON.finditer(text):
+        start, end = match.span()
+        if any(start >= protected_start and end <= protected_end for protected_start, protected_end in protected_spans):
+            continue
+        if not _plausible_person(match.group(0)):
+            continue
+        found.append(("Person", match.group(0), start, end))
     unique: list[IdentifierCandidate] = []
-    for index, (label, value) in enumerate(dict.fromkeys(found)):
+    labeled_values = list(dict.fromkeys((label, value) for label, value, _start, _end in found))
+    for index, (label, value) in enumerate(labeled_values):
         unique.append(
             IdentifierCandidate(
                 candidate_id=f"id-{index}",

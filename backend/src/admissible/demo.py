@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from cloak.models import (
+from admissible.models import (
     AttackResult,
     GroundedEvidence,
     IdentityHypothesis,
@@ -8,7 +8,7 @@ from cloak.models import (
     TraceEvent,
     UtilityLedger,
 )
-from cloak.privacy import candidate_from_text
+from admissible.privacy import candidate_from_text
 
 DEMO_SURROGATE = "Jamie Ives"
 DEMO_INITIAL = (
@@ -213,7 +213,7 @@ def _task_conflict_demo() -> dict[str, object]:
             title="The task needs the same facts",
             detail=(
                 "Removing the role, event, or return date would make the requested accommodation review materially "
-                "wrong, so Cloak left the sentence unchanged."
+                "wrong, so Admissible left the sentence unchanged."
             ),
             status="info",
             evidence=[evidence],
@@ -225,7 +225,7 @@ def _task_conflict_demo() -> dict[str, object]:
             event_id="task-conflict:4",
             mode="recorded",
             phase="run_blocked",
-            title="Cloak refused to fake privacy",
+            title="Admissible refused to fake privacy",
             detail=(
                 "The exact identifying facts are also required for the downstream task. The candidate remains "
                 "unchanged and is not cleared to share."

@@ -26,14 +26,14 @@ export function verdictFrom(event: TraceEvent | undefined): RunVerdict | null {
   if (event?.phase === "run_passed") {
     return {
       kind: "passed",
-      label: "Scoped pass",
-      headline: "This attacker could no longer identify the subject from this text.",
+      label: "Cleared",
+      headline: "Cleared. This attacker could not identify the subject from this text.",
       explanation:
-        "GPT-5.6 omitted the protected subject during discovery and the separate holdout check. The tested replacements and task-critical facts remained intact.",
+        "GPT-5.6 omitted the protected subject during discovery and again in the separate holdout check. The tested replacements and every task-critical fact stayed intact.",
       testedScope: "GPT-5.6 reading the sanitized candidate in this run",
       excludedScope: "People or systems holding external records, private databases, or other auxiliary data",
       conflictingFacts: [],
-      integrity: "This is a test result, not a guarantee that the document is anonymous.",
+      integrity: "A clearance is a ruling against the tier named above. It is not a grant of anonymity.",
     };
   }
 
@@ -43,10 +43,10 @@ export function verdictFrom(event: TraceEvent | undefined): RunVerdict | null {
   const taskConflict = conflictingFacts.length > 0;
   return {
     kind: "refused",
-    label: taskConflict ? "Honest refusal" : "Not cleared to share",
+    label: "Held",
     headline: taskConflict
-      ? "Cloak cannot hide the subject without breaking the task."
-      : "Cloak did not establish a shareable result.",
+      ? "Held. The fact that identifies them is the fact your task needs."
+      : "Held. No clearance was established.",
     explanation: taskConflict
       ? "The same facts that identify the subject are facts the downstream task needs. They were left unchanged."
       : event.detail,
@@ -58,7 +58,7 @@ export function verdictFrom(event: TraceEvent | undefined): RunVerdict | null {
       : "No privacy conclusion can be drawn from an incomplete or blocked run",
     conflictingFacts,
     integrity: taskConflict
-      ? "Cloak will not fake privacy or destroy the facts your task depends on."
-      : "Cloak kept the last tested candidate and refused to present an unverified result.",
+      ? "The gate does not trade away the facts your task depends on to buy a clearance."
+      : "The gate kept the last tested candidate rather than issue a clearance it cannot justify.",
   };
 }

@@ -11,8 +11,8 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from cloak.controller import CONTROLLER_PROTOCOL_VERSION  # noqa: E402
-from cloak.sessions import SessionStore  # noqa: E402
+from admissible.controller import CONTROLLER_PROTOCOL_VERSION  # noqa: E402
+from admissible.sessions import SessionStore  # noqa: E402
 from scripts.scenario_acceptance import (  # noqa: E402
     COMMITTED_CORPUS_SHA256,
     DEFAULT_CASES,

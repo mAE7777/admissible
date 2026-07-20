@@ -7,8 +7,8 @@ import secrets
 from collections import Counter
 from dataclasses import dataclass, field
 
-from cloak.models import RestoreResult
-from cloak.privacy import LOOSE_TOKEN_PATTERN, TOKEN_PATTERN
+from admissible.models import RestoreResult
+from admissible.privacy import LOOSE_TOKEN_PATTERN, TOKEN_PATTERN
 
 PERSON_FIRST_NAMES = (
     "Avery",
@@ -267,22 +267,33 @@ class LocalVault:
             return f"{prefix} Services"
         return f"{original[: first_word.start()]}{prefix}{original[first_word.end() :]}"
 
-    def _surrogate(self, label: str, original: str, *, subject_name: tuple[str, str] | None, salt: int = 0) -> str:
-        if EMAIL.fullmatch(original):
+    def _surrogate(
+        self,
+        label: str,
+        original: str,
+        *,
+        subject_name: tuple[str, str] | None,
+        identifier_type: str | None = None,
+        salt: int = 0,
+    ) -> str:
+        normalized_type = identifier_type.casefold() if identifier_type else None
+        if normalized_type == "email" or EMAIL.fullmatch(original):
             if subject_name is None:
                 subject_name = self._person(label, salt=salt)
             local = f"{subject_name[0]}.{subject_name[1]}".casefold()
             return f"{local}@example.invalid"
-        if PHONE.fullmatch(original):
+        if normalized_type == "phone" or PHONE.fullmatch(original):
             return self._phone(label, original, salt=salt)
-        if SSN.fullmatch(original):
+        if normalized_type in {"ssn", "identifier"} or SSN.fullmatch(original):
             return self._formatted_code(label, original, salt=salt)
-        if ADDRESS.match(original):
+        if normalized_type == "address" or ADDRESS.match(original):
             return self._address(label, original, salt=salt)
-        if ORGANIZATION_CUE.search(original):
+        if normalized_type == "organization" or ORGANIZATION_CUE.search(original):
             return self._organization(label, original, salt=salt)
         words = original.split()
-        if 1 < len(words) <= 4 and all(PERSON_WORD.fullmatch(word.strip(".,")) for word in words):
+        if normalized_type == "person" or (
+            1 < len(words) <= 4 and all(PERSON_WORD.fullmatch(word.strip(".,")) for word in words)
+        ):
             first, last = self._person(label, salt=salt)
             return f"{first} {last}"
         if len(words) == 1 and PERSON_WORD.fullmatch(words[0].strip(".,")):
@@ -296,11 +307,18 @@ class LocalVault:
         source: str,
         *,
         subject_name: tuple[str, str] | None = None,
+        identifier_type: str | None = None,
         reserved: set[str] | None = None,
     ) -> str:
         unavailable = reserved or set()
         for salt in range(100):
-            value = self._surrogate(label, original, subject_name=subject_name, salt=salt)
+            value = self._surrogate(
+                label,
+                original,
+                subject_name=subject_name,
+                identifier_type=identifier_type,
+                salt=salt,
+            )
             if (
                 value.casefold() not in source.casefold()
                 and value not in self.token_to_value
@@ -309,29 +327,40 @@ class LocalVault:
                 return value
         raise RuntimeError("Could not create a collision-free local surrogate.")
 
-    def sanitize(self, text: str, subject_aliases: list[str], identifiers: list[str]) -> str:
+    def sanitize(
+        self,
+        text: str,
+        subject_aliases: list[str],
+        identifiers: list[str],
+        *,
+        identifier_labels: dict[str, str] | None = None,
+    ) -> str:
         aliases = list(dict.fromkeys(alias for alias in subject_aliases if alias))
         alias_keys = {alias.casefold() for alias in aliases}
+        confirmed_labels = identifier_labels or {}
         canonical = aliases[0] if aliases else "Protected subject"
         subject_name = self._person("protected-subject")
-        values: list[tuple[str, str, str]] = []
+        values: list[tuple[str, str, str, str | None]] = []
         for index, alias in enumerate(aliases):
             values.append(
                 (
                     "subject",
                     f"protected-subject-{index}",
                     alias,
+                    "Person",
                 )
             )
         values.extend(
-            ("identifier", f"identifier-{index}", value)
+            ("identifier", f"identifier-{index}", value, confirmed_labels.get(value))
             for index, value in enumerate(identifiers)
             if value and value.casefold() not in alias_keys
         )
 
         label_surrogates: dict[str, str] = {}
+        identifier_types: dict[str, str | None] = {}
         reserved_surrogates: set[str] = set()
-        for kind, label, value in values:
+        for kind, label, value, identifier_type in values:
+            identifier_types[label] = identifier_type
             if kind == "subject":
                 label_surrogates[label] = self._subject_alias(value, canonical, *subject_name)
             else:
@@ -340,12 +369,13 @@ class LocalVault:
                     value,
                     text,
                     subject_name=subject_name,
+                    identifier_type=identifier_type,
                     reserved=reserved_surrogates,
                 )
             reserved_surrogates.add(label_surrogates[label])
 
         candidate_spans: list[tuple[int, int, str]] = []
-        for _kind, label, value in values:
+        for _kind, label, value, _identifier_type in values:
             candidate_spans.extend((start, end, label) for start, end in _casefold_spans(text, value))
         selected_spans: list[tuple[int, int, str]] = []
         cursor = 0
@@ -364,7 +394,13 @@ class LocalVault:
             if handle is None:
                 handle = _preserve_case(surface, label_surrogates[label])
                 if handle in self.token_to_value and self.token_to_value[handle] != surface:
-                    handle = self._unique(f"{label}:{surface}", surface, text, subject_name=subject_name)
+                    handle = self._unique(
+                        f"{label}:{surface}",
+                        surface,
+                        text,
+                        subject_name=subject_name,
+                        identifier_type=identifier_types[label],
+                    )
                 surface_handles[key] = handle
                 self.token_to_value[handle] = surface
             sanitized_parts.extend((text[cursor:start], handle))

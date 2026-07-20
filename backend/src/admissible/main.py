@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from cloak.benchmark import BenchmarkCondition, benchmark_candidate, case_by_id
-from cloak.controller import Controller, validate_attack_result
-from cloak.demo import recorded_demo
-from cloak.models import (
+from admissible.benchmark import BenchmarkCondition, benchmark_candidate, case_by_id
+from admissible.controller import Controller, validate_attack_result
+from admissible.demo import recorded_demo
+from admissible.models import (
     BenchmarkAttackRequest,
     BenchmarkAttackResponse,
     CausalRequest,
@@ -24,19 +24,46 @@ from cloak.models import (
     SessionCreateRequest,
     SessionCreateResponse,
 )
-from cloak.services.attacker import OpenAIAttacker
-from cloak.services.ollama import OllamaAnonymizer
-from cloak.sessions import Session, SessionStore
+from admissible.services.attacker import OpenAIAttacker
+from admissible.services.ollama import OllamaAnonymizer
+from admissible.sessions import Session, SessionStore
 
 app = FastAPI(
-    title="Cloak local controller",
+    title="Admissible local controller",
     version="0.1.0",
     description="Loopback-only API. Document bodies are never written to logs or disk.",
 )
+ALLOWED_ORIGINS = ("http://127.0.0.1:5173", "http://localhost:5173")
+
+
+@app.middleware("http")
+async def enforce_origin_and_headers(request: Request, call_next):  # type: ignore[no-untyped-def]
+    """Reject cross-origin state-changing calls, and set baseline response headers.
+
+    CORS alone does not gate whether a request is PROCESSED — it only withholds the
+    access-control header from the response, so a browser page on any origin can still drive a
+    state-changing endpoint on this loopback API. That matters most for POST /runs, which spends
+    the configured API budget and executes the live attack loop. A bodyless POST is a CORS
+    "simple" request, so it is not preflighted and FastAPI's strict-content-type behaviour does
+    not cover it either.
+
+    An absent Origin (curl, the test client, any non-browser caller) is allowed: the loopback bind
+    is what guards those, and blocking them would break local tooling for no security gain.
+    """
+    origin = request.headers.get("origin")
+    if request.method not in ("GET", "HEAD", "OPTIONS") and origin is not None and origin not in ALLOWED_ORIGINS:
+        return JSONResponse(status_code=403, content={"detail": "Cross-origin request rejected."})
+    response = await call_next(request)
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("Content-Security-Policy", "frame-ancestors 'none'")
+    return response
+
+
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "testserver"])
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
+    allow_origins=list(ALLOWED_ORIGINS),
     allow_credentials=False,
     allow_methods=["GET", "POST", "DELETE"],
     allow_headers=["Content-Type"],

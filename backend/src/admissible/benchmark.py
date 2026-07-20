@@ -11,9 +11,9 @@ from typing import Any, Literal
 from presidio_analyzer import Pattern, PatternRecognizer
 from pydantic import Field
 
-from cloak.models import ProtectedSubject, StrictModel
-from cloak.privacy import TOKEN_PATTERN, sha256_text
-from cloak.services.attacker import ATTACKER_MODEL, model_is_gpt_56
+from admissible.models import ProtectedSubject, StrictModel
+from admissible.privacy import TOKEN_PATTERN, sha256_text
+from admissible.services.attacker import ATTACKER_MODEL, model_is_gpt_56
 
 Difficulty = Literal["direct_pii", "single_distinctive_clue", "aggregate_quasi_identifiers"]
 BenchmarkCondition = Literal["raw", "direct_identifier_only"]

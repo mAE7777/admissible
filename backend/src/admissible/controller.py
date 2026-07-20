@@ -7,7 +7,7 @@ import uuid
 from collections.abc import AsyncIterator
 from typing import Literal
 
-from cloak.models import (
+from admissible.models import (
     AttackResult,
     CausalResult,
     GroundedEvidence,
@@ -17,7 +17,7 @@ from cloak.models import (
     TraceEvent,
     UtilityLedger,
 )
-from cloak.privacy import (
+from admissible.privacy import (
     apply_exact_patch,
     candidate_from_text,
     check_utility,
@@ -27,9 +27,9 @@ from cloak.privacy import (
     sha256_text,
     tokenizable_specifics,
 )
-from cloak.services.attacker import Attacker, AttackerProtocolError, model_is_gpt_56
-from cloak.services.ollama import LocalAnonymizer
-from cloak.sessions import Session
+from admissible.services.attacker import Attacker, AttackerProtocolError, model_is_gpt_56
+from admissible.services.ollama import LocalAnonymizer
+from admissible.sessions import Session
 
 MAX_CALLS = 8
 NOMINAL_MAX_CALLS = 5
@@ -198,7 +198,7 @@ class Controller:
                             run_id=run_id,
                             phase="run_blocked",
                             title="The edit made re-identification easier",
-                            detail="The subject moved up in rank, so Cloak restored the previous best candidate.",
+                            detail="The subject moved up in rank, so Admissible restored the previous best candidate.",
                             status="blocked",
                             calls=calls,
                             candidate=best_candidate,
@@ -219,7 +219,7 @@ class Controller:
                             phase="rank_unchanged",
                             title="One layer fell; the clue stack held",
                             detail=(
-                                "Rank is unchanged, but the prior grounded span is gone. Cloak will retire fresh "
+                                "Rank is unchanged, but the prior grounded span is gone. Admissible will retire fresh "
                                 "grounded clues within the remaining privacy and utility budgets."
                             ),
                             status="info",
@@ -334,7 +334,7 @@ class Controller:
                                 else "Fabricated or ambiguous clues discarded"
                             ),
                             detail=(
-                                "Cloak kept the exact required fact instead of returning a wrong answer: "
+                                "Admissible kept the exact required fact instead of returning a wrong answer: "
                                 + " | ".join(unique_conflicts[:3])
                                 if unique_conflicts
                                 else "The identity guess may be correct, but no claimed clue can authorize an edit."
@@ -358,10 +358,10 @@ class Controller:
                             phase="run_blocked",
                             title="Privacy and task utility conflict" if unique_conflicts else "Edit cap reached",
                             detail=(
-                                "Cloak kept the exact required fact instead of returning a wrong answer: "
+                                "Admissible kept the exact required fact instead of returning a wrong answer: "
                                 + " | ".join(unique_conflicts[:3])
                                 if unique_conflicts
-                                else "Seven grounded edits were not enough; Cloak stopped rather than erase more "
+                                else "Seven grounded edits were not enough; Admissible stopped rather than erase more "
                                 "of the document."
                             ),
                             status="blocked",
@@ -514,7 +514,7 @@ class Controller:
                                 run_id=run_id,
                                 phase="patch_rejected",
                                 title="Utility budget kept this clue intact",
-                                detail="Cloak skipped this proposal and checked the next grounded clue.",
+                                detail="Admissible skipped this proposal and checked the next grounded clue.",
                                 status="info",
                                 calls=calls,
                                 candidate=candidate,
@@ -538,7 +538,7 @@ class Controller:
                                 run_id=run_id,
                                 phase="patch_rejected",
                                 title="Repeated candidate skipped",
-                                detail="This document state was already tested, so Cloak tried another clue.",
+                                detail="This document state was already tested, so Admissible tried another clue.",
                                 status="info",
                                 calls=calls,
                                 candidate=candidate,
@@ -587,7 +587,7 @@ class Controller:
                                 else "No utility-bounded clue edit was available"
                             ),
                             detail=(
-                                "Cloak kept the exact required fact instead of returning a wrong answer: "
+                                "Admissible kept the exact required fact instead of returning a wrong answer: "
                                 + " | ".join(unique_conflicts[:3])
                                 if unique_conflicts
                                 else "Every fresh grounded proposal failed a local grammar, surrogate, pin, span, or "

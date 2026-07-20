@@ -16,18 +16,18 @@ from openai import AsyncOpenAI
 from openai.types.shared_params import Reasoning
 from pydantic import Field
 
-from cloak.controller import CONTROLLER_PROTOCOL_VERSION, MAX_CALLS, Controller, parse_sse_payload
-from cloak.models import (
+from admissible.controller import CONTROLLER_PROTOCOL_VERSION, MAX_CALLS, Controller, parse_sse_payload
+from admissible.models import (
     AttackResult,
     ConfirmSessionRequest,
     ProtectedSubject,
     SanitizedEnvelope,
     StrictModel,
 )
-from cloak.privacy import identity_rank, sha256_text
-from cloak.services.attacker import ATTACKER_MODEL, AttackerOutput, model_is_gpt_56
-from cloak.services.ollama import OllamaAnonymizer
-from cloak.sessions import SessionStore
+from admissible.privacy import identity_rank, sha256_text
+from admissible.services.attacker import ATTACKER_MODEL, AttackerOutput, model_is_gpt_56
+from admissible.services.ollama import OllamaAnonymizer
+from admissible.sessions import SessionStore
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CASES = REPO_ROOT / "qa-reports" / "scenario-acceptance-cases.json"
@@ -557,7 +557,7 @@ def load_corpus() -> AcceptanceCorpus:
     if not all(case.private_persona for case in corpus.scenarios):
         raise ValueError("Every acceptance subject must be a private synthetic persona.")
     if any(case.language != "en" for case in corpus.scenarios):
-        raise ValueError("Cloak acceptance is English-only.")
+        raise ValueError("Admissible acceptance is English-only.")
     for case in corpus.scenarios:
         direct_values = [case.protected_subject.canonical_identity, *case.direct_identifiers]
         if any(value not in case.document for value in direct_values):
@@ -1028,7 +1028,7 @@ def write_report(path: Path, corpus: AcceptanceCorpus, results: dict[str, Any]) 
         if isinstance(attempt, dict)
     )
     lines = [
-        "# Cloak real-world scenario acceptance",
+        "# Admissible real-world scenario acceptance",
         "",
         f"- Date: {datetime.now().astimezone().date().isoformat()}",
         f"- Status: **{'complete' if complete else 'partial'}**",
@@ -1069,7 +1069,8 @@ def write_report(path: Path, corpus: AcceptanceCorpus, results: dict[str, Any]) 
         ),
         "",
         (
-            "A `surrogate_only_utility_miss` means the paired answer failed the strict utility gate even though Cloak "
+            "A `surrogate_only_utility_miss` means the paired answer failed the strict utility gate even "
+            "though Admissible "
             "made no inference edit and preserved the document's substantive facts. The failure still counts, but "
             "it is not attributed to deleted task content. Natural surrogate effects and one-shot answer variance "
             "remain possible causes."
@@ -1209,7 +1210,7 @@ def select_cases(corpus: AcceptanceCorpus, mode: str, requested: list[str]) -> l
 
 
 async def async_main() -> int:
-    parser = argparse.ArgumentParser(description="Run Cloak's bounded real-world workflow acceptance suite.")
+    parser = argparse.ArgumentParser(description="Run Admissible's bounded real-world workflow acceptance suite.")
     parser.add_argument("mode", choices=("sanity", "full"))
     parser.add_argument("--scenario-id", action="append", default=[], dest="scenario_ids")
     parser.add_argument("--max-new-remote-calls", type=int, default=20)

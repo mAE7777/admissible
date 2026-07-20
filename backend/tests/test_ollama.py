@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from cloak.services.ollama import OllamaAnonymizer
+from admissible.services.ollama import OllamaAnonymizer
 
 
 def test_replacement_contract_rejects_token_contamination_and_unbounded_phrases() -> None:

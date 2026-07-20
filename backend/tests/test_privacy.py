@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from cloak.privacy import (
+from admissible.privacy import (
     MAX_CUMULATIVE_EDIT_RATIO,
     MAX_PER_PASS_EDIT_RATIO,
     apply_exact_patch,
@@ -14,7 +14,7 @@ from cloak.privacy import (
     repair_sentence_replacement,
     tokenizable_specifics,
 )
-from cloak.vault import LocalVault
+from admissible.vault import LocalVault
 
 
 def test_normalize_input_uses_lf_nfc_and_codepoint_limit() -> None:
@@ -324,7 +324,7 @@ def test_utility_budget_allows_bounded_stack_edits_without_permitting_mush() -> 
 
 
 def test_recorded_demo_uses_a_grammatical_accepted_patch() -> None:
-    from cloak.demo import DEMO_FINAL, DEMO_SURROGATE, recorded_demo
+    from admissible.demo import DEMO_FINAL, DEMO_SURROGATE, recorded_demo
 
     assert "won the a " not in DEMO_FINAL
     assert DEMO_SURROGATE in DEMO_FINAL

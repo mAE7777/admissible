@@ -84,10 +84,10 @@ export async function streamRun(
 }
 
 export const TOKEN_INSTRUCTION =
-  "This document uses Cloak replacement names and identifiers. Keep each replacement exactly spelled whenever you use it so Cloak can restore the original locally; do not try to identify the originals.";
+  "This document uses Admissible replacement names and identifiers. Keep each replacement exactly spelled whenever you use it so Admissible can restore the original locally; do not try to identify the originals.";
 
 export function copyPayload(candidate: string, handles: string[] = []): string {
   const references = Array.from(new Set(handles));
-  const referenceLine = references.length ? `\nCloak replacements: ${references.join(" · ")}` : "";
+  const referenceLine = references.length ? `\nAdmissible replacements: ${references.join(" · ")}` : "";
   return `${TOKEN_INSTRUCTION}${referenceLine}\n\n${candidate}`;
 }
