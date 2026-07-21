@@ -1,3 +1,14 @@
+/*
+ * MINIMUM FONT SIZE FLOOR (demo-legibility policy, set 2026-07-21).
+ * The product is recorded for a sub-3-min submission video watched at reduced size,
+ * so on-screen text must survive that. Lower bounds, never go below these:
+ *   13px  absolute floor for any text (mono micro-labels, eyebrows, status, footers)
+ *   14px  functional text (buttons, form labels, meta, trace detail)
+ *   15px  reading content (verdict explanation, quoted clues, trace titles)
+ *   16px+ hero elements (the guess identity + confidence number)
+ * The one exception is the mobile `.status-dot { font-size: 0 }`, which deliberately
+ * hides a redundant label on narrow screens. Do not reintroduce sizes below 13px.
+ */
 :root {
   color: #171815;
   background: #f2efe6;
@@ -65,8 +76,8 @@ textarea:focus-visible {
 .topbar {
   position: relative;
   z-index: 3;
-  display: grid;
-  grid-template-columns: 1fr minmax(280px, 620px) 1fr;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   min-height: 64px;
   border-bottom: 1px solid var(--line);
@@ -95,21 +106,13 @@ textarea:focus-visible {
   margin-left: 2px;
 }
 
-.promise {
-  margin: 0;
-  color: #595951;
-  font-size: 12px;
-  line-height: 1.35;
-  text-align: center;
-}
-
 .health {
   display: flex;
   justify-self: end;
   gap: 16px;
   color: #55564f;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
+  font-size: 13px;
   text-transform: uppercase;
 }
 
@@ -169,7 +172,7 @@ textarea:focus-visible {
 .eyebrow {
   color: var(--muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -199,7 +202,7 @@ textarea:focus-visible {
   padding: 7px 9px;
   color: var(--muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
+  font-size: 13px;
   text-transform: uppercase;
 }
 
@@ -232,7 +235,7 @@ textarea:focus-visible {
   margin-top: 10px;
   color: var(--muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
+  font-size: 13px;
   text-transform: uppercase;
 }
 
@@ -264,7 +267,7 @@ textarea:focus-visible {
   border: 1px solid var(--ink);
   border-radius: 2px;
   padding: 0 18px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 750;
   letter-spacing: 0.02em;
   transition: transform 180ms var(--ease), background-color 180ms var(--ease), color 180ms var(--ease);
@@ -309,7 +312,7 @@ textarea:focus-visible {
   display: block;
   margin-bottom: 7px;
   color: #4e4f49;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -341,7 +344,7 @@ textarea:focus-visible {
   padding: 11px 0 7px;
   color: var(--muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -349,12 +352,12 @@ textarea:focus-visible {
 
 .identifier-row {
   display: grid;
-  grid-template-columns: 18px 70px minmax(0, 1fr) auto;
+  grid-template-columns: 18px auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 8px;
   min-height: 42px;
   border-bottom: 1px solid var(--line);
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .identifier-row code {
@@ -369,6 +372,7 @@ textarea:focus-visible {
   color: var(--muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .pin-field textarea {
@@ -380,7 +384,7 @@ textarea:focus-visible {
 .blocked-note,
 .recorded-warning {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.55;
 }
 
@@ -439,7 +443,7 @@ textarea:focus-visible {
   margin-bottom: 13px;
   color: inherit;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.13em;
   text-transform: uppercase;
@@ -459,7 +463,7 @@ textarea:focus-visible {
   max-width: 650px;
   margin: 18px 0 0;
   color: inherit;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.62;
 }
 
@@ -473,7 +477,7 @@ textarea:focus-visible {
   margin: 0 0 10px;
   color: #ffb1a5;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
+  font-size: 13px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -524,7 +528,7 @@ textarea:focus-visible {
   margin-bottom: 6px;
   color: #585b51;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 8px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -536,14 +540,14 @@ textarea:focus-visible {
 
 .verdict-scope dd {
   margin: 0;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
 .verdict-integrity {
   margin: 22px 0 0;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.03em;
   line-height: 1.5;
@@ -563,7 +567,7 @@ textarea:focus-visible {
 .run-gate > p {
   margin: 0;
   color: #55564f;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -594,7 +598,7 @@ textarea:focus-visible {
   margin: 0;
   color: var(--muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -623,7 +627,7 @@ textarea:focus-visible {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .restore-report pre {
@@ -631,7 +635,7 @@ textarea:focus-visible {
   overflow: auto;
   white-space: pre-wrap;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.55;
 }
 
@@ -641,7 +645,7 @@ textarea:focus-visible {
   padding: 10px 4px;
   color: #7e3026;
   background: rgba(255, 123, 104, 0.09);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .attack-rail {
@@ -694,7 +698,7 @@ textarea:focus-visible {
   padding: 6px 8px;
   color: var(--signal);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -768,7 +772,7 @@ textarea:focus-visible {
   padding: 0;
   color: var(--rail-muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
+  font-size: 13px;
   list-style: none;
   text-transform: uppercase;
 }
@@ -797,7 +801,7 @@ textarea:focus-visible {
   padding-top: 21px;
   color: #858c80;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 9px;
+  font-size: 13px;
 }
 
 .trace-index::after {
@@ -844,7 +848,7 @@ textarea:focus-visible {
 
 .trace-title-line h3 {
   margin: 0;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.35;
 }
 
@@ -852,14 +856,14 @@ textarea:focus-visible {
   flex: none;
   color: var(--rail-muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 9px;
+  font-size: 13px;
   text-transform: uppercase;
 }
 
 .trace-body > p {
   margin: 6px 0 0;
   color: var(--rail-muted);
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.55;
 }
 
@@ -874,15 +878,22 @@ textarea:focus-visible {
   gap: 8px;
   border-bottom: 1px solid #262b25;
   padding: 8px 0;
-  font-size: 11px;
+  font-size: 16px;
 }
 
 .guess span,
 .guess em {
   color: var(--rail-muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 9px;
+  font-size: 15px;
   font-style: normal;
+}
+
+/* The confidence number is the demo's WOW ("...confidence 99.9%"); make it the brightest, largest datum in the panel. */
+.guess em {
+  color: var(--rail-text);
+  font-size: 17px;
+  font-weight: 700;
 }
 
 .evidence {
@@ -905,7 +916,7 @@ textarea:focus-visible {
 .evidence code {
   color: var(--rail-muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 8px;
+  font-size: 13px;
   line-height: 1.5;
   text-transform: uppercase;
 }
@@ -915,14 +926,14 @@ textarea:focus-visible {
   overflow-wrap: anywhere;
   color: #f1f0e8;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 12px;
+  font-size: 15px;
   line-height: 1.45;
 }
 
 .diff-view {
   margin-top: 12px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
+  font-size: 14px;
 }
 
 .diff-view > div {
@@ -955,7 +966,7 @@ textarea:focus-visible {
   margin-top: 11px;
   color: #aeb6a6;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 8px;
+  font-size: 13px;
   text-transform: uppercase;
 }
 
@@ -976,7 +987,7 @@ textarea:focus-visible {
 
 .causal-lab > p {
   color: var(--rail-muted);
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -992,7 +1003,7 @@ textarea:focus-visible {
 .causal-item q {
   color: #d9dbd4;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.4;
 }
 
@@ -1002,14 +1013,14 @@ textarea:focus-visible {
   padding-inline: 11px;
   color: var(--signal);
   background: transparent;
-  font-size: 9px;
+  font-size: 13px;
   text-transform: uppercase;
 }
 
 .causal-result {
   grid-column: 1 / -1;
   margin: 0;
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -1036,7 +1047,7 @@ textarea:focus-visible {
   padding-top: 12px;
   color: #858c80;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 8px;
+  font-size: 13px;
   text-transform: uppercase;
 }
 
@@ -1063,14 +1074,6 @@ textarea:focus-visible {
 }
 
 @media (max-width: 980px) {
-  .topbar {
-    grid-template-columns: auto 1fr;
-  }
-
-  .promise {
-    display: none;
-  }
-
   .workspace {
     grid-template-columns: 1fr;
   }
@@ -1117,7 +1120,7 @@ textarea:focus-visible {
   }
 
   .identifier-row {
-    grid-template-columns: 18px 60px minmax(0, 1fr);
+    grid-template-columns: 18px auto minmax(0, 1fr);
   }
 
   .identifier-row > span:last-child {

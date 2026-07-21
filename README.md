@@ -5,9 +5,15 @@
 Put your real work in front of a frontier model. What clears, cleared against a live attack. What
 doesn't, never leaves. What comes back is yours again.
 
-It redacts — names become natural, reversible surrogates, and the clues that give a person away are
-generalized — but it refuses to stop there and call the result clean, the way every redaction tool
-does. It attacks its own redaction with a real GPT-5.6 adversary, rules on whether the redaction
+> **Evaluating this for Build Week?** You can run it with **no OpenAI key and no Ollama**. Jump to
+> [Try it](#try-it-without-an-api-key-or-ollama): it plays two real recorded attack traces (one
+> cleared, one held) plus a built-in sample document. The live loop needs only your own OpenAI key
+> and is optional for evaluation.
+
+Removing the name is not enough: a capable model can infer who you are from everything else the
+document says. So admissible works on both layers. It redacts (names become natural, reversible
+surrogates, and the clues that give a person away are generalized), but it refuses to stop there
+and call the result clean, the way every redaction tool does. It attacks its own redaction with a real GPT-5.6 adversary, rules on whether the redaction
 actually held, and closes the handoff on anything that does not clear. What clears comes back to you
 exactly, real names restored.
 
@@ -37,7 +43,7 @@ Only **sanitized candidates** cross the boundary. Your raw text, the real identi
 vault, your downstream task, and the restored output never leave your machine. The attacker is
 fixed to GPT-5.6 and never falls back to another model; if it is unavailable, returns a different
 model, refuses, or produces unusable evidence, the controller blocks rather than quietly weakening
-the protocol. `admissible` never sends anything to your preferred AI — you copy the cleared text
+the protocol. `admissible` never sends anything to your preferred AI; you copy the cleared text
 across yourself.
 
 See [contracts.md](contracts.md) for the full trust boundary.
@@ -56,7 +62,7 @@ number meaningless.
 |---|---|---|
 | Auxiliary-free tier (attacker sees only the sanitized text), five private-person scenarios | 5/5 cleared | Supports the narrow text-only claim on a small fictional sample. Weak evidence, not a validated rate. |
 | **Primary tier: web search + a 64-record auxiliary population** | **0/5** | Matching outside records relinked every persona. The gate held all five and named the conflict. |
-| Closed four-person roster | 0/5 | The explicit worst-case boundary. All five held. |
+| Closed four-person roster (5 scenarios) | 0/5 cleared | The explicit worst-case boundary; all five held. |
 | Downstream utility and restore | mean 94/100; 1/5 strict equivalence; 2/5 same practical value; **5/5 exact restore** | Natural surrogates preserve the facts and restore exactly; one-shot answers still omitted material advice in several scenarios. |
 | Historical 15-case re-identification smoke set | raw 100% → direct-ID baseline 60% → 33% | Historical controller-v9 evidence. |
 
@@ -80,7 +86,7 @@ per-clue grounding decisions, and the block reasons are all in the repo:
 > including the old name in schema versions, condition keys, and cached model output. Evidence of a
 > run is not edited after the fact.
 
-## Try it — no API key, no Ollama
+## Try it without an API key or Ollama
 
 You need [Node.js 22](https://nodejs.org/en/download/archive/v22), pnpm 10.17, and
 [uv](https://docs.astral.sh/uv/getting-started/installation/). `uv` installs the pinned Python 3.12
@@ -99,7 +105,7 @@ pnpm dev
 If `corepack` is unavailable, install pnpm 10.17 directly and skip the two `corepack` lines.
 
 Open <http://127.0.0.1:5173>. The health indicator reports **degraded** without the two live model
-dependencies, which is correct and visible by design — the app still runs. Choose **Watch the gate
+dependencies, which is correct and visible by design; the app still runs. Choose **Watch the gate
 clear a document** for the cleared trace, or **Watch the gate hold a document** for the
 task-conflict trace. Both are recorded, synthetic, and labelled as such on screen.
 
@@ -166,7 +172,10 @@ I pushed back when early results looked better than the product was: a 53% post-
 re-identification rate, early stopping on stacked clues, task-fact deletion that produced wrong
 answers, opaque tokens that degraded downstream reasoning, and a fictional-persona privacy test that
 ignored external records. Those failures drove rollback-to-best, multi-clue progress, hard task-fact
-protection, natural surrogates, the stronger linkage tier, and the enforced hold.
+protection, natural surrogates, the stronger linkage tier, and the enforced hold. That adversarial
+loop ran throughout development, not only at the end: pointing the GPT-5.6 attacker at each
+Codex-built control is what surfaced those failures, so GPT-5.6 was a build-time collaborator as
+much as the product's runtime adversary.
 
 The product models are explicit. Qwen3.5 4B runs locally through Ollama with deterministic
 structured output and no thinking mode. GPT-5.6 is the remote live adversary: medium reasoning for

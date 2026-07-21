@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, copyPayload, streamRun, TOKEN_INSTRUCTION } from "./api";
+import { replacedValueMentions } from "./mentions";
 import { codePointLength, limitCodePoints, MAX_DOCUMENT_CODEPOINTS } from "./text";
 import { verdictFrom, type RunVerdict } from "./verdict";
 import type {
@@ -13,7 +14,15 @@ import type {
 
 type Stage = "paste" | "review" | "ready" | "running" | "finished";
 
-const SAMPLE = `Mara Voss led the Harborlight reporting project from her office at Westbridge College. She won the 2019 Northshore Civic Data Prize and later taught the Tuesday night newsroom lab. Contact: mara.voss@example.com.`;
+const SAMPLE = `CONFIDENTIAL — biographical review (internal working copy, do not distribute)
+
+Subject: Alan Turing.
+
+The subject read mathematics at King's College and, in 1936, published the paper introducing the abstract computing machine that now carries his name. From 1939 he worked at the Government Code and Cypher School at Bletchley Park, where he designed methods that broke the German Enigma traffic. In 1950 he proposed the imitation game, the test of whether a machine can pass for human.
+
+In 1952 the subject was convicted under the gross indecency laws then in force and accepted hormone treatment in place of imprisonment; his security clearance was withdrawn. He died in 1954 in Wilmslow, of cyanide poisoning, at the age of forty-one. A formal pardon was granted long after his death.
+
+Reviewer note: confirm the 1936 publication date before the timeline is finalized. Contact the archivist at records@kings.example.ac.uk.`;
 
 function App() {
   const [health, setHealth] = useState<Health | null>(null);
@@ -203,7 +212,6 @@ function App() {
         <button className="wordmark" onClick={reset} aria-label="Start over">
           admissible<span className="wordmark-mark">/</span>
         </button>
-        <p className="promise">Original text, real identifiers, the replacement map, and restored answers stay on this device.</p>
         <div className="health" aria-label="System status">
           <StatusDot ready={health?.ollama_ready} label={health ? health.ollama_model : "Local model"} />
           <StatusDot ready={health?.attacker_ready} label="GPT-5.6" />
@@ -214,7 +222,6 @@ function App() {
         <section className="document-pane" aria-label="Document workspace">
           <div className="document-heading">
             <div>
-              <span className="eyebrow">Document / {stageLabel(stage)}</span>
               <h1>{documentTitle(stage)}</h1>
             </div>
             {candidate && (
@@ -227,8 +234,8 @@ function App() {
           {stage === "paste" && (
             <div className="paste-stage">
               <p className="landing-thesis">
-                Admissible shows how GPT-5.6 can identify someone, fixes only the clues your task can spare,
-                and refuses when privacy would require damaging the document.
+                Put your real work in front of a frontier model. What clears, cleared against a live attack.
+                What doesn&rsquo;t, never leaves. What comes back is yours again.
               </p>
               <textarea
                 className="document-input"
@@ -309,6 +316,17 @@ function App() {
                 <span>Facts that must not change <small>one exact phrase per line</small></span>
                 <textarea value={pins} onChange={(event) => setPins(event.target.value)} placeholder="One task-critical fact per line" />
               </label>
+              <ReplacementNotice
+                task={task}
+                pins={pins}
+                values={[
+                  subject,
+                  ...aliases.split(",").map((alias) => alias.trim()),
+                  ...session.identifier_candidates
+                    .filter((item) => selectedIds.has(item.candidate_id))
+                    .map((item) => item.value),
+                ]}
+              />
               <button className="primary-button" disabled={!subject.trim() || !task.trim() || busy} onClick={confirmDocument}>
                 {busy ? "Creating working copy…" : "Create private working copy"}
               </button>
@@ -344,7 +362,6 @@ function App() {
               {hasPassed && (
                 <div className="handoff">
                   <div>
-                    <span className="eyebrow">Manual handoff</span>
                     <h2>Use the tested text in your AI</h2>
                     <p>{TOKEN_INSTRUCTION}</p>
                   </div>
@@ -381,7 +398,6 @@ function App() {
         <aside className="attack-rail" aria-label="Re-identification attack trace">
           <div className="rail-heading">
             <div>
-              <span className="eyebrow">Attack theater</span>
               <h2>Who does GPT-5.6 think this is?</h2>
             </div>
             <span className={`mode-label ${mode}`}>{mode === "live" ? "Live" : "Recorded · synthetic"}</span>
@@ -501,7 +517,7 @@ function TraceRow({ event, index }: { event: TraceEvent; index: number }) {
               <div className="guess" key={`${guess.identity}-${guessIndex}`}>
                 <span>#{guessIndex + 1}</span>
                 <strong>{guess.identity}</strong>
-                <em>{Math.round(guess.confidence * 100)}%</em>
+                <em>{(guess.confidence * 100).toFixed(1)}%</em>
               </div>
             ))}
           </div>
@@ -559,17 +575,34 @@ function RestoreReport({ result }: { result: RestoreResult }) {
   );
 }
 
+function ReplacementNotice({ task, pins, values }: { task: string; pins: string; values: string[] }) {
+  const mentioned = replacedValueMentions(task, pins, values);
+  if (!mentioned.length) {
+    return null;
+  }
+  return (
+    <p className="quiet">
+      Your task or must-keep facts mention{" "}
+      {mentioned.map((value, index) => (
+        <span key={value}>
+          {index > 0 ? ", " : ""}
+          <code>{value}</code>
+        </span>
+      ))}
+      . These values get replaced before anything leaves this device, so the AI you paste into will not
+      see the real ones. If your question depends on a real value, uncheck it above, or expect a general
+      answer.
+    </p>
+  );
+}
+
 function StatusDot({ ready, label }: { ready?: boolean; label: string }) {
   return <span className="status-dot"><i className={ready ? "ready" : "off"} />{label}</span>;
 }
 
-function stageLabel(stage: Stage) {
-  return { paste: "paste", review: "confirm", ready: "working copy", running: "under attack", finished: "result" }[stage];
-}
-
 function documentTitle(stage: Stage) {
   return {
-    paste: "See what this document gives away.",
+    paste: "The gate between your sensitive documents and the AI you want to use.",
     review: "Choose what Admissible may replace.",
     ready: "Private working copy",
     running: "Testing the working copy",
