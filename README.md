@@ -201,7 +201,7 @@ qa-reports/                                 curated synthetic evidence and curre
 
 - English pasted text only; one protected subject per in-memory, one-hour session.
 - Exact alias matching; no fuzzy identity match and no file upload.
-- No automatic send to ChatGPT, Claude, Gemini, or another assistant.
+- No automatic send to ChatGPT or another assistant.
 - A five-call nominal and eight-call absolute attacker budget; the optional causal pair uses two.
 - No promise against outside records, data brokers, a known candidate roster, or future attackers.
 
