@@ -40,7 +40,7 @@ ALLOWED_ORIGINS = ("http://127.0.0.1:5173", "http://localhost:5173")
 async def enforce_origin_and_headers(request: Request, call_next):  # type: ignore[no-untyped-def]
     """Reject cross-origin state-changing calls, and set baseline response headers.
 
-    CORS alone does not gate whether a request is PROCESSED — it only withholds the
+    CORS alone does not decide whether a request is PROCESSED. It only withholds the
     access-control header from the response, so a browser page on any origin can still drive a
     state-changing endpoint on this loopback API. That matters most for POST /runs, which spends
     the configured API budget and executes the live attack loop. A bodyless POST is a CORS

@@ -14,7 +14,7 @@ import type {
 
 type Stage = "paste" | "review" | "ready" | "running" | "finished";
 
-const SAMPLE = `CONFIDENTIAL — biographical review (internal working copy, do not distribute)
+const SAMPLE = `CONFIDENTIAL: biographical review (internal working copy, do not distribute)
 
 Subject: Alan Turing.
 
@@ -234,8 +234,9 @@ function App() {
           {stage === "paste" && (
             <div className="paste-stage">
               <p className="landing-thesis">
-                Put your real work in front of a frontier model. What clears, cleared against a live attack.
-                What doesn&rsquo;t, never leaves. What comes back is yours again.
+                Paste a document and name the person it must protect. Admissible replaces identifying details on
+                this device, then tests whether GPT-5.6 can still tell who the document is about. Only text that
+                passes the test can be copied out.
               </p>
               <textarea
                 className="document-input"
@@ -443,7 +444,7 @@ function App() {
                   </button>
                   {causal[quote] && causal[quote] !== "loading" && (
                     <p className={`causal-result ${causal[quote].verdict}`}>
-                      {causal[quote].verdict.replace("_", " ")} — {causal[quote].detail}
+                      {causal[quote].verdict.replace("_", " ")}: {causal[quote].detail}
                     </p>
                   )}
                 </div>

@@ -231,8 +231,8 @@ def test_cross_origin_state_change_is_rejected_before_the_controller_runs() -> N
         assert hostile.json()["detail"] == "Cross-origin request rejected."
 
         # The legitimate frontend origin is unaffected, and so is a non-browser caller with no
-        # Origin at all (curl, the test client, local tooling) — those are guarded by the loopback
-        # bind, and rejecting them would break local use for no security gain.
+        # Origin at all (curl, the test client, local tooling). The loopback bind guards those
+        # callers, and rejecting them would break local use for no security gain.
         for headers in ({"Origin": "http://127.0.0.1:5173"}, {}):
             allowed = client.post(f"/api/sessions/{session_id}/confirm", json={}, headers=headers)
             assert allowed.status_code != 403
