@@ -30,9 +30,9 @@ from admissible.services.ollama import OllamaAnonymizer
 from admissible.sessions import SessionStore
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_CASES = REPO_ROOT / "qa-reports" / "scenario-acceptance-cases.json"
-DEFAULT_RESULTS = REPO_ROOT / "qa-reports" / "scenario-acceptance-results.json"
-DEFAULT_REPORT = REPO_ROOT / "qa-reports" / "scenario-acceptance-report.md"
+DEFAULT_CASES = REPO_ROOT / "evaluation" / "scenario-acceptance-cases.json"
+DEFAULT_RESULTS = REPO_ROOT / "evaluation" / "scenario-acceptance-results.json"
+DEFAULT_REPORT = REPO_ROOT / "evaluation" / "scenario-acceptance-report.md"
 COMMITTED_CORPUS_SHA256 = "af3c5525734287424473a7621baf22805f2215af14c5cf66efdccadcc654420e"
 PROTOCOL_VERSION = "cloak-scenario-acceptance-2026-07-16.v2"
 TASK_PROMPT_VERSION = "cloak-scenario-task-2026-07-16.v4"

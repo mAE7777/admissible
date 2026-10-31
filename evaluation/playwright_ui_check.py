@@ -191,7 +191,7 @@ def main() -> int:
             landing_contrast = contrast_findings(page)
             landing_ax = ax_summary(page)
             focus = focus_trace(page) if name == "mobile" else []
-            page.screenshot(path=SCREENSHOTS / f"qa-final-landing-{name}.png", full_page=True)
+            page.screenshot(path=SCREENSHOTS / f"landing-{name}.png", full_page=True)
 
             page.get_by_role("button", name="Watch Cloak fix a document").click()
             page.get_by_role(
@@ -200,7 +200,7 @@ def main() -> int:
             passed_metrics = page_metrics(page)
             passed_contrast = contrast_findings(page)
             passed_text = page.locator("body").inner_text()
-            page.screenshot(path=SCREENSHOTS / f"qa-honest-verdict-passed-{name}.png", full_page=True)
+            page.screenshot(path=SCREENSHOTS / f"verdict-passed-{name}.png", full_page=True)
 
             page.get_by_role("button", name="Start over").click()
             page.get_by_role("heading", name="See what this document gives away.").wait_for()
@@ -211,7 +211,7 @@ def main() -> int:
             refusal_metrics = page_metrics(page)
             refusal_contrast = contrast_findings(page)
             refusal_text = page.locator("body").inner_text()
-            page.screenshot(path=SCREENSHOTS / f"qa-honest-verdict-refusal-{name}.png", full_page=True)
+            page.screenshot(path=SCREENSHOTS / f"verdict-refusal-{name}.png", full_page=True)
 
             mobile_small_targets = []
             if name == "mobile":
@@ -277,12 +277,12 @@ def main() -> int:
         task_required = seal_button.is_disabled()
         task_field.fill("Summarize the project while preserving the award and teaching role.")
         task_enabled_seal = seal_button.is_enabled()
-        page.screenshot(path=SCREENSHOTS / "qa-final-review-task-desktop.png", full_page=True)
+        page.screenshot(path=SCREENSHOTS / "review-task-desktop.png", full_page=True)
         review_subject = page.get_by_label("Protected subject").input_value()
         seal_button.click()
         page.get_by_role("button", name="Test who GPT-5.6 can identify").wait_for()
         candidate = page.locator(".paper-copy").inner_text()
-        page.screenshot(path=SCREENSHOTS / "qa-final-ready-desktop.png", full_page=True)
+        page.screenshot(path=SCREENSHOTS / "ready-desktop.png", full_page=True)
         report["journeys"]["prepareAndSeal"] = {  # type: ignore[index]
             "subject": review_subject,
             "taskRequired": task_required,

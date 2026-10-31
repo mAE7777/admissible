@@ -34,10 +34,10 @@ repository suite.
 
 ## Render evidence
 
-- [Scoped pass, desktop](screenshots/qa-honest-verdict-passed-desktop.png)
-- [Honest refusal, desktop](screenshots/qa-honest-verdict-refusal-desktop.png)
-- [Scoped pass, mobile](screenshots/qa-honest-verdict-passed-mobile.png)
-- [Honest refusal, mobile](screenshots/qa-honest-verdict-refusal-mobile.png)
+- [Scoped pass, desktop](screenshots/verdict-passed-desktop.png)
+- [Honest refusal, desktop](screenshots/verdict-refusal-desktop.png)
+- [Scoped pass, mobile](screenshots/verdict-passed-mobile.png)
+- [Honest refusal, mobile](screenshots/verdict-refusal-mobile.png)
 
 ## Boundaries
 

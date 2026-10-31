@@ -75,14 +75,14 @@ above the fold.
 Every number above comes from committed runs, not from a summary. The raw model outputs, the
 per-clue grounding decisions, and the block reasons are all in the repo:
 
-- [scenario acceptance report](qa-reports/scenario-acceptance-report.md) and its
-  [raw results](qa-reports/scenario-acceptance-results.json)
-- [benchmark report](qa-reports/benchmark-smoke-report.md) and its
-  [raw results](qa-reports/benchmark-smoke-results.json)
-- [UI and controller QA](qa-reports/qa-honesty-verdict.md)
+- [scenario acceptance report](evaluation/scenario-acceptance-report.md) and its
+  [raw results](evaluation/scenario-acceptance-results.json)
+- [benchmark report](evaluation/benchmark-smoke-report.md) and its
+  [raw results](evaluation/benchmark-smoke-results.json)
+- [UI and controller QA](evaluation/ui-and-controller-check.md)
 
 > **Note on the name.** This project was built and evaluated under the name `cloak` and renamed to
-> `admissible` on 2026-07-19. Everything in `qa-reports/` is preserved exactly as it was recorded,
+> `admissible` on 2026-07-19. Everything in `evaluation/` is preserved exactly as it was recorded,
 > including the old name in schema versions, condition keys, and cached model output. Evidence of a
 > run is not edited after the fact.
 
@@ -194,7 +194,7 @@ backend/src/admissible/controller.py        attack, grounding, edit, rollback, a
 backend/src/admissible/main.py              loopback FastAPI API
 frontend/src/                               React attack-theater UI
 backend/tests/                              controller and boundary regression tests
-qa-reports/                                 curated synthetic evidence and current reports
+evaluation/                                 curated synthetic evidence and current reports
 ```
 
 ## Scope

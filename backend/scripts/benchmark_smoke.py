@@ -22,8 +22,8 @@ from admissible.privacy import identity_rank
 
 BASE_URL = "http://127.0.0.1:8787"
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_RESULTS = REPO_ROOT / "qa-reports" / "benchmark-smoke-results.json"
-DEFAULT_REPORT = REPO_ROOT / "qa-reports" / "benchmark-smoke-report.md"
+DEFAULT_RESULTS = REPO_ROOT / "evaluation" / "benchmark-smoke-results.json"
+DEFAULT_REPORT = REPO_ROOT / "evaluation" / "benchmark-smoke-report.md"
 Condition = Literal["raw", "direct_identifier_only", "cloak"]
 CONDITIONS: tuple[Condition, ...] = ("raw", "direct_identifier_only", "cloak")
 CONDITION_LABELS: tuple[tuple[Condition, str], ...] = (

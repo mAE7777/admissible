@@ -23,7 +23,7 @@ DIFFICULTIES: tuple[Difficulty, ...] = (
     "single_distinctive_clue",
     "aggregate_quasi_identifiers",
 )
-DEFAULT_CASES_PATH = Path(__file__).resolve().parents[3] / "qa-reports" / "benchmark-smoke-cases.json"
+DEFAULT_CASES_PATH = Path(__file__).resolve().parents[3] / "evaluation" / "benchmark-smoke-cases.json"
 
 
 class BenchmarkCase(StrictModel):
