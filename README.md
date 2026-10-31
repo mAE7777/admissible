@@ -1,90 +1,94 @@
 # admissible
 
-**The gate between your sensitive documents and the AI you want to use.**
+Check a sensitive document before you hand it to an AI.
 
-Put your real work in front of a frontier model. What clears, cleared against a live attack. What
-doesn't, never leaves. What comes back is yours again.
+admissible runs on your machine. You paste a document and name the person it must protect. It
+replaces that person's name and other direct identifiers, such as emails, phone numbers, addresses,
+ID numbers, and organizations, with natural stand-ins it can reverse. Then it asks a remote model,
+GPT-5.6, to work out who the document is about, and rewrites the contextual clues that still give
+the person away.
 
-> **Evaluating this for Build Week?** You can run it with **no OpenAI key and no Ollama**. Jump to
-> [Try it](#try-it-without-an-api-key-or-ollama): it plays two real recorded attack traces (one
-> cleared, one held) plus a built-in sample document. The live loop needs only your own OpenAI key
-> and is optional for evaluation.
+The remote model cannot edit anything. Local code checks each guess against the real identity and
+each quoted clue against the text. Only then does admissible rewrite the quoted passage with a local
+model, and it changes nothing else. The attacker fails when the person is not among its top five guesses. A document is
+cleared only when the attacker fails twice: once in the attack-and-edit loop, and once on a separate
+final attempt. You can copy out only cleared text. When the AI's answer comes back, admissible puts
+the real names back on your machine.
 
-Removing the name is not enough: a capable model can infer who you are from everything else the
-document says. So admissible works on both layers. It redacts (names become natural, reversible
-surrogates, and the clues that give a person away are generalized), but it refuses to stop there
-and call the result clean, the way every redaction tool does. It attacks its own redaction with a real GPT-5.6 adversary, rules on whether the redaction
-actually held, and closes the handoff on anything that does not clear. What clears comes back to you
-exactly, real names restored.
+So far, test documents clear against an attacker that reads only the text. When the attacker could
+also search the web and match outside records, it identified the person in every test document, and
+admissible refused to release any of them. The numbers are in [Results so far](#results-so-far).
 
-## How the ruling is earned
+To see it without an API key or Ollama, use the recorded demo in
+[Try it without an API key or Ollama](#try-it-without-an-api-key-or-ollama).
 
-The remote model has **no authority over your document.** It cannot edit anything. It asserts, and
-a local controller adjudicates every assertion before a single character moves. The rules are code,
-not prompts, and you can read them:
+## Local code decides every change
 
-- The guessed identity must match local ground truth (`identity_rank`). A wrong guess is shown and
-  discarded; it authorizes nothing.
-- Every claimed clue must resolve to **exactly one** span in the text (`ground_quote`). Missing and
-  ambiguous quotes are both rejected, so a fabricated or paraphrased "gotcha" can never drive an edit.
-- Edits are written only inside the authorized span (`apply_exact_patch` is the sole mutation path),
-  and any local patch whose `old_text` does not match that span exactly is thrown out.
-- Any patch that would lose a confirmed pin or an identified task-critical fact is rejected.
-- If the subject's rank gets *worse*, the last remotely-tested best candidate is restored.
-- One attacker call is permanently reserved for an independent holdout and is never spent on
-  discovery. A clearance requires a discovery miss **and** that separate holdout miss.
+The remote model has no authority over your document. It makes claims, and local code checks each
+claim before any text changes. The rules are code, not prompts:
+
+- The guessed identity must match the confirmed name or one of its exact aliases (`identity_rank`).
+  A wrong guess is shown and discarded. It changes nothing.
+- Every quoted clue must match exactly one passage in the text (`ground_quote`). A quote that is
+  missing or appears more than once is rejected, so an invented or paraphrased clue can never drive
+  an edit.
+- Edits stay inside the matched passage. `apply_exact_patch` is the only code path that changes the
+  text, and any local patch whose `old_text` does not match that passage exactly is thrown out.
+- A patch that would lose a confirmed stand-in, a fact you marked as must-keep, or a fact the task
+  depends on is rejected.
+- If an edit makes the person easier to identify, admissible goes back to the best version the
+  attacker has already tested.
+- One attacker call is reserved for the final attempt and is never spent during editing.
 
 ## Why does a privacy tool talk to OpenAI at all?
 
-Because something has to actually attack the document, and a real attack is the only thing that
-earns a ruling.
+Something has to attack the document. A test against a capable model is the only evidence that the
+clues are gone.
 
-Only **sanitized candidates** cross the boundary. Your raw text, the real identities, the surrogate
-vault, your downstream task, and the restored output never leave your machine. The attacker is
-fixed to GPT-5.6 and never falls back to another model; if it is unavailable, returns a different
-model, refuses, or produces unusable evidence, the controller blocks rather than quietly weakening
-the protocol. `admissible` never sends anything to your preferred AI; you copy the cleared text
-across yourself.
+Only sanitized text crosses the boundary. Your raw text, the real identities, the table of
+stand-ins, your task, and the restored output never leave your machine. The attacker is fixed to
+GPT-5.6 and never falls back to another model. If it is unavailable, returns a different model,
+refuses, or produces unusable evidence, admissible stops instead of quietly weakening the test.
+admissible never sends anything to the AI you want to use. You copy the cleared text across
+yourself.
 
 See [contracts.md](contracts.md) for the full trust boundary.
 
-## What a clearance means, and the number that goes with it
+## Results so far
 
-A clearance is a **ruling against a named tier**, not a grant of anonymity.
+A clearance means one specific attacker, with a specific amount of outside help, failed to identify
+the person. It is not a promise of anonymity.
 
-The tier this project's own acceptance report calls **primary** is a web-enabled attacker with a
-64-record auxiliary population. **At that tier the gate currently clears nothing: 0/5, with
-whole-workflow acceptance also 0/5.** That is the gate's current yield and the largest open problem
-in this project. It is stated here, on the first screen, because burying it would make every other
-number meaningless.
+I tested five synthetic documents about fictional private people (an employment contract, a medical
+summary, an asylum declaration, a credit statement, and an HR complaint) against three attackers:
 
-| Evaluation | Result | Honest reading |
+| Attacker | Cleared | What happened |
 |---|---|---|
-| Auxiliary-free tier (attacker sees only the sanitized text), five private-person scenarios | 5/5 cleared | Supports the narrow text-only claim on a small fictional sample. Weak evidence, not a validated rate. |
-| **Primary tier: web search + a 64-record auxiliary population** | **0/5** | Matching outside records relinked every persona. The gate held all five and named the conflict. |
-| Closed four-person roster (5 scenarios) | 0/5 cleared | The explicit worst-case boundary; all five held. |
-| Downstream utility and restore | mean 94/100; 1/5 strict equivalence; 2/5 same practical value; **5/5 exact restore** | Natural surrogates preserve the facts and restore exactly; one-shot answers still omitted material advice in several scenarios. |
-| Historical 15-case re-identification smoke set | raw 100% → direct-ID baseline 60% → 33% | Historical controller-v9 evidence. |
+| Reads only the cleaned text | 5/5 | The attacker could not name the person. This is a small fictional sample, so treat it as weak evidence. |
+| Reads the text, searches the web, and gets 64 matching outside records | 0/5 | The outside records linked every person back. admissible refused to release all five. |
+| Picks from a known list of four people | 0/5 | The worst case. admissible refused to release all five. |
 
-So: what clears is genuinely earned against a real adversary plus a holdout. How *often* the gate
-clears, at the harder tier, is today essentially never. Those are two different facts and both are
-above the fold.
+Answers produced from the cleaned documents scored a mean 94/100 against answers from the originals.
+A GPT-5.6 judge rated one of five strictly equivalent and two of five as giving the same practical
+value. Several answers still left out advice that the answer from the original document gave. Real
+names came back exactly in all five.
 
-## Read the actual attack transcripts
+On a separate set of 15 synthetic documents about public figures, the attacker identified the person
+in 100% of the original documents, 60% after a standard redaction of names and contact details, and
+33% after admissible. That set was measured on 2026-07-16 with an earlier version of the controller.
 
-Every number above comes from committed runs, not from a summary. The raw model outputs, the
-per-clue grounding decisions, and the block reasons are all in the repo:
+The second row of the table is the main open problem. When the attacker has outside records,
+admissible currently refuses rather than clears.
 
-- [scenario acceptance report](evaluation/scenario-acceptance-report.md) and its
+Every number comes from committed runs, with the raw model output and the decision on each clue:
+
+- [Scenario report](evaluation/scenario-acceptance-report.md) and its
   [raw results](evaluation/scenario-acceptance-results.json)
-- [benchmark report](evaluation/benchmark-smoke-report.md) and its
+- [Public-figure benchmark report](evaluation/benchmark-smoke-report.md) and its
   [raw results](evaluation/benchmark-smoke-results.json)
-- [UI and controller QA](evaluation/ui-and-controller-check.md)
+- [UI and controller check](evaluation/ui-and-controller-check.md)
 
-> **Note on the name.** This project was built and evaluated under the name `cloak` and renamed to
-> `admissible` on 2026-07-19. Everything in `evaluation/` is preserved exactly as it was recorded,
-> including the old name in schema versions, condition keys, and cached model output. Evidence of a
-> run is not edited after the fact.
+The project was called Cloak until 2026-07-19, and the recorded evidence keeps that name.
 
 ## Try it without an API key or Ollama
 
@@ -104,18 +108,20 @@ pnpm dev
 
 If `corepack` is unavailable, install pnpm 10.17 directly and skip the two `corepack` lines.
 
-Open <http://127.0.0.1:5173>. The health indicator reports **degraded** without the two live model
-dependencies, which is correct and visible by design; the app still runs. Choose **Watch the gate
-clear a document** for the cleared trace, or **Watch the gate hold a document** for the
-task-conflict trace. Both are recorded, synthetic, and labelled as such on screen.
+Open <http://127.0.0.1:5173>. Without an OpenAI key and Ollama, the two status lights in the top bar
+stay off and `/api/health` reports `degraded`. The app still runs. Choose **Watch the gate clear a
+document** for a recorded run that clears, or **Watch the gate hold a document** for a recorded run
+that admissible refuses because the task needs the identifying facts. Both runs are synthetic, and
+the screen labels them as recorded.
 
-The combined command starts the loopback FastAPI backend at <http://127.0.0.1:8787> and the Vite
-frontend at <http://127.0.0.1:5173>. Run them separately with `pnpm dev:api` and `pnpm dev:web`.
+`pnpm dev` starts the FastAPI backend at <http://127.0.0.1:8787> and the Vite frontend at
+<http://127.0.0.1:5173>, both on loopback only. To run them separately, use `pnpm dev:api` and
+`pnpm dev:web`.
 
 ## Run the live loop
 
-Live runs additionally need an OpenAI API key and Ollama's `qwen3.5:4b`. Install
-[Ollama](https://ollama.com/download), start it, then:
+Live runs also need an OpenAI API key and Ollama's `qwen3.5:4b`. Install
+[Ollama](https://ollama.com/download), start it, then run:
 
 ```sh
 ollama pull qwen3.5:4b
@@ -130,23 +136,23 @@ pnpm dev
 |---|---:|---|---|
 | `OPENAI_API_KEY` | live runs | none | Authenticates the fixed GPT-5.6 attacker. |
 | `OLLAMA_BASE_URL` | no | `http://127.0.0.1:11434` | Local Ollama API. |
-| `OLLAMA_MODEL` | no | `qwen3.5:4b` | Local patch proposer. |
+| `OLLAMA_MODEL` | no | `qwen3.5:4b` | Local model that proposes edits. |
 
 ### A document, end to end
 
 1. Paste an English document of at most 12,000 Unicode code points and choose **Find identifiers**.
-2. Enter the AI task you actually want to perform. Confirm one protected subject, their exact
-   aliases, the identifier suggestions, and any facts that must survive unchanged.
+2. Enter the AI task you want to perform. Confirm the person to protect, their exact aliases, the
+   identifier suggestions, and any facts that must stay unchanged.
 3. Choose **Create private working copy**, then **Test who GPT-5.6 can identify**.
-4. Watch each guess, exact clue, local edit, utility decision, and re-attack.
-5. If the gate clears it, **Copy tested text** and paste it into your preferred AI yourself. On a
-   held document that action is not offered.
-6. Paste the AI's answer back and choose **Restore real values**. Restoration is local and exact.
+4. Watch each guess, quoted clue, local edit, fact check, and repeat attack.
+5. If the document clears, choose **Copy tested text** and paste it into your AI yourself. A refused
+   document has no copy button.
+6. Paste the AI's answer back and choose **Restore real values**. Restoring is local and exact.
 
 ## Test locally
 
-The normal suite uses fakes and committed fixtures. It needs neither Ollama nor an API key and
-makes no model calls.
+The normal suite uses fakes and committed fixtures. It needs neither Ollama nor an API key and makes
+no model calls.
 
 ```sh
 pnpm build
@@ -156,57 +162,44 @@ uv run --project backend ruff check backend/src backend/tests backend/scripts
 uv run --project backend mypy backend/src
 ```
 
-GitHub Actions runs the frontend build/tests and backend tests on every push and pull request. The
-live soak, preflight, benchmark, and acceptance scripts are intentionally not CI jobs because they
-require local or paid model services.
+GitHub Actions runs the frontend build, the frontend tests, and the backend tests on every push and
+pull request. The live soak, preflight, benchmark, and scenario scripts are not CI jobs, because they
+need a local model or a paid API.
 
-## How I built it with Codex and GPT-5.6
+## Models
 
-Codex built this codebase from scratch under my direction: the local controller, the privacy checks,
-the attack trace, the surrogate vault, the exact restore path, the UI, the tests, and the evaluation
-harnesses. The initial research pass used moderate depth; the controller failures, the threat-model
-split, and the utility regressions got deeper implementation and verification passes. The repository
-does not record a stable Codex model identifier, so I am not inventing one here.
-
-I pushed back when early results looked better than the product was: a 53% post-sanitization
-re-identification rate, early stopping on stacked clues, task-fact deletion that produced wrong
-answers, opaque tokens that degraded downstream reasoning, and a fictional-persona privacy test that
-ignored external records. Those failures drove rollback-to-best, multi-clue progress, hard task-fact
-protection, natural surrogates, the stronger linkage tier, and the enforced hold. That adversarial
-loop ran throughout development, not only at the end: pointing the GPT-5.6 attacker at each
-Codex-built control is what surfaced those failures, so GPT-5.6 was a build-time collaborator as
-much as the product's runtime adversary.
-
-The product models are explicit. Qwen3.5 4B runs locally through Ollama with deterministic
-structured output and no thinking mode. GPT-5.6 is the remote live adversary: medium reasoning for
-discovery and post-edit attacks, high reasoning for the final holdout. GPT-5.6 also acts as the
-strict comparison judge in the opt-in acceptance harness; those calls use only committed
-synthetic/public fixtures.
+Two models do the work. Qwen3.5 4B runs locally through Ollama and proposes edits, using structured
+output with thinking turned off. GPT-5.6 is the remote attacker. It uses medium reasoning for the
+attacks during editing and high reasoning for the final attempt. The evaluation scripts also use
+GPT-5.6 as a strict judge of answer quality, and those calls use only the committed synthetic and
+public test documents.
 
 ## Project map
 
 ```text
-backend/src/admissible/privacy.py           deterministic recognition and utility checks
-backend/src/admissible/vault.py             session-random natural surrogates and exact restore
-backend/src/admissible/services/attacker.py fixed sanitized-only GPT-5.6 boundary
-backend/src/admissible/services/ollama.py   local Qwen patch proposer
-backend/src/admissible/controller.py        attack, grounding, edit, rollback, and ruling loop
-backend/src/admissible/main.py              loopback FastAPI API
-frontend/src/                               React attack-theater UI
+backend/src/admissible/privacy.py           identity matching, clue matching, exact patching, and task-fact checks
+backend/src/admissible/vault.py             per-session stand-ins and exact restore
+backend/src/admissible/services/attacker.py the only GPT-5.6 client, which accepts sanitized text only
+backend/src/admissible/services/ollama.py   local Qwen model that proposes edits
+backend/src/admissible/controller.py        attack, clue check, edit, rollback, and verdict loop
+backend/src/admissible/main.py              FastAPI app on loopback
+frontend/src/                               React UI that shows each attack step
 backend/tests/                              controller and boundary regression tests
-evaluation/                                 curated synthetic evidence and current reports
+evaluation/                                 synthetic test documents, raw results, and reports
 ```
 
 ## Scope
 
-- English pasted text only; one protected subject per in-memory, one-hour session.
-- Exact alias matching; no fuzzy identity match and no file upload.
-- No automatic send to ChatGPT or another assistant.
-- A five-call nominal and eight-call absolute attacker budget; the optional causal pair uses two.
-- No promise against outside records, data brokers, a known candidate roster, or future attackers.
+- English pasted text only. One protected person per session, kept in memory for one hour.
+- Exact alias matching. No fuzzy identity matching and no file upload.
+- No automatic sending to ChatGPT or any other assistant.
+- At most eight attacker calls per document, five in a normal run. The optional check of whether
+  one clue caused the guess uses two of those five.
+- No protection is promised against outside records, data brokers, an attacker who already has a
+  short list of candidates, or future attackers.
 
-The bundled benchmark and acceptance scripts are explicit exceptions for committed
-synthetic/public fixtures only. They cannot accept a caller-supplied document through the product API.
+The benchmark and scenario scripts are the one exception to the sanitized-only rule. They work only
+on the committed synthetic and public test documents, and neither accepts a document you supply.
 
 ## License
 
